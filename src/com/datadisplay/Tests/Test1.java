@@ -12,9 +12,11 @@ public class Test1 {
 		
 		DataDisplay dd = new DataDisplay();
 		CartesianGraph cg = dd.showCartesian();
+		cg.setConnectPoints(true);
 		for(int i=-50; i<50;i++){
 			cg.plot(i, primeFactors(i).size());
 		}
+		
 		
 	}
 	

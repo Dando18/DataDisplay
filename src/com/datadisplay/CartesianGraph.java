@@ -15,9 +15,10 @@ public class CartesianGraph extends JPanel {
 	public final int PT_WIDTH = 4, PT_HEIGHT = 4;
 	public int ppp = 20;
 	public int origin_x = this.getWidth()/2, origin_y = this.getHeight()/2;
-	
-	
 	public List<Point> pts;
+	
+	private Color pt_color = Color.RED;
+	private boolean connectPoints = false;
 	
 	public CartesianGraph() {
 		
@@ -32,6 +33,10 @@ public class CartesianGraph extends JPanel {
 		drawAxes(g);
 		for(int i=0; i<pts.size(); i++){
 			drawPoint(g, pts.get(i).x,pts.get(i).y);
+			if(connectPoints && i!=pts.size()-1){
+				g.drawLine(origin_x+(pts.get(i).x*ppp), origin_y-(pts.get(i).y*ppp), 
+						origin_x+(pts.get(i+1).x*ppp), origin_y-(pts.get(i+1).y*ppp));
+			}
 		}
 	}
 	
@@ -41,17 +46,14 @@ public class CartesianGraph extends JPanel {
 	
 	public void plot(Point p){
 		pts.add(p);
-		//drawPoint(p.x,p.y);
 	}
 	
 	private void drawPoint(Graphics g, double x, double y){
 		origin_x = this.getWidth()/2;
 		origin_y = this.getHeight()/2;
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.RED);
-		g2d.fillOval((int)(origin_x+(x*ppp)-PT_WIDTH/2), (int)(origin_y-(y*ppp)-PT_HEIGHT/2), PT_WIDTH, PT_HEIGHT);
-		System.out.println((int)(origin_x+(x*ppp))+", "+ (int)(origin_y-(y*ppp)));
-		
+		g2d.setColor(pt_color);
+		g2d.fillOval((int)(origin_x+(x*ppp)-PT_WIDTH/2), (int)(origin_y-(y*ppp)-PT_HEIGHT/2), PT_WIDTH, PT_HEIGHT);		
 	}
 	
 	private void drawAxes(Graphics g){
@@ -59,6 +61,22 @@ public class CartesianGraph extends JPanel {
 		g2d.setColor(Color.BLACK);
 		g2d.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
 		g2d.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
+	}
+	
+	public void setPointColor(Color c){
+		pt_color = c;
+	}
+	
+	public Color getPointColor(){
+		return pt_color;
+	}
+	
+	public void setConnectPoints(Boolean b){
+		connectPoints = b;
+	}
+	
+	public Boolean getConnectPoints(){
+		return connectPoints;
 	}
 
 }

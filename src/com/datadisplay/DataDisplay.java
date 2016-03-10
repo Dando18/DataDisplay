@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 public class DataDisplay {
 	
 	
-	private static JFrame frame;
+	private JFrame frame;
 	
 	public DataDisplay(){
 		
@@ -29,6 +29,10 @@ public class DataDisplay {
 		frame.getContentPane().add(cg, BorderLayout.CENTER);
 		frame.pack();
 		return cg;
+	}
+	
+	public JFrame getFrame(){
+		return frame;
 	}
 	
 	
