@@ -16,6 +16,7 @@ public class Test1 {
 		for(int i=-50; i<50;i++){
 			cg.plot(i, primeFactors(i).size());
 		}
+		cg.setShowMean(true);
 		
 		
 	}

@@ -19,6 +19,10 @@ public class CartesianGraph extends JPanel {
 	
 	private Color pt_color = Color.RED;
 	private boolean connectPoints = false;
+	private boolean showMean = false;
+	
+	//stats
+	private double mean = 0;
 	
 	public CartesianGraph() {
 		
@@ -38,6 +42,11 @@ public class CartesianGraph extends JPanel {
 						origin_x+(pts.get(i+1).x*ppp), origin_y-(pts.get(i+1).y*ppp));
 			}
 		}
+		if(showMean){
+			g.setColor(Color.BLACK);
+			g.drawLine(0, (int)(origin_y-(mean*ppp)), this.getWidth(), (int)(origin_y-(mean*ppp)));
+			g.drawString("mean: "+mean, this.getWidth()/4, (int)(origin_y-(mean*ppp*1.1)));
+		}
 	}
 	
 	public void plot(double x, double y){
@@ -46,6 +55,15 @@ public class CartesianGraph extends JPanel {
 	
 	public void plot(Point p){
 		pts.add(p);
+		calculate();
+	}
+	
+	public void calculate(){
+		int[] pts_y = new int[pts.size()];
+		for(int i=0; i<pts.size(); i++){
+			pts_y[i] = pts.get(i).y;
+		}
+		mean = MathUtilities.mean(pts_y);
 	}
 	
 	private void drawPoint(Graphics g, double x, double y){
@@ -77,6 +95,28 @@ public class CartesianGraph extends JPanel {
 	
 	public Boolean getConnectPoints(){
 		return connectPoints;
+	}
+
+	/**
+	 * @return the showMean
+	 */
+	public boolean isShowMean() {
+		return showMean;
+	}
+	
+	public void showMean(){
+		showMean = true;
+	}
+	
+	public void hideMean(){
+		showMean = false;
+	}
+	
+	/**
+	 * @param showMean the showMean to set
+	 */
+	public void setShowMean(boolean showMean) {
+		this.showMean = showMean;
 	}
 
 }
