@@ -1,8 +1,10 @@
 package com.datadisplay;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 
 public class DataDisplay {
@@ -10,8 +12,10 @@ public class DataDisplay {
 	
 	private JFrame frame;
 	
+	private final int BOXES;
+	
 	public DataDisplay(int boxes){
-		
+		BOXES = boxes;
 		frame = new JFrame();
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,6 +40,11 @@ public class DataDisplay {
 	public CartesianGraph showCartesian(){
 		CartesianGraph cg = new CartesianGraph();
 		frame.getContentPane().add(cg);
+		
+		if(BOXES>1){
+			cg.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+		
 		frame.pack();
 		return cg;
 	}

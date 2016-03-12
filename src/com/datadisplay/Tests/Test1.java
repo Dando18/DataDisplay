@@ -13,10 +13,11 @@ public class Test1 {
 		DataDisplay dd = new DataDisplay();
 		CartesianGraph cg = dd.showCartesian();
 		cg.setConnectPoints(true);
-		for(int i=-50; i<50;i++){
+		for(int i=0; i<50;i++){
 			cg.plot(i, primeFactors(i).size());
 		}
-		cg.setShowMean(true);
+		cg.showMean();
+		cg.showStandardDeviation();
 		
 		
 	}
