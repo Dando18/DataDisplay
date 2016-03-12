@@ -13,6 +13,7 @@ public class Test3 {
 		bc.addValue(3);
 		bc.addValue(1);
 		bc.addValue(7);
+		bc.showBarValues();
 	}
 	
 }

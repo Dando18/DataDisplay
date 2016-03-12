@@ -14,7 +14,6 @@ public class Test2 {
 	 * and add the panels.
 	 */
 	
-	@SuppressWarnings("unused")
 	public static void main(String[] args){
 		
 		Random rand = new Random(System.nanoTime());
@@ -31,11 +30,13 @@ public class Test2 {
 		cg0.showStandardDeviation();
 		
 		BarChart bc0 = dd.showBarChart();
+		bc0.showBarValues();
 		for(int i=0; i<5; i++){
 			bc0.addValue(rand.nextInt(5)+1);
 		}
 		
 		BarChart bc1 = dd.showBarChart();
+		bc1.showBarValues();
 		int bc1_max = rand.nextInt(8-3)+3;
 		for(int i=0; i<bc1_max; i++){
 			bc1.addValue(rand.nextInt(5)+1);

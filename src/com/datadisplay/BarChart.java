@@ -14,7 +14,8 @@ public class BarChart extends JPanel{
 	private int origin_y = this.getHeight()-20;
 	private int ppp = 20;
 	
-	List<Integer> bar_values;
+	private List<Integer> bar_values;
+	private boolean showBarValues = false;
 	
 	private Color[] bar_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.PINK};
 	private int color_inc = 0;
@@ -40,12 +41,26 @@ public class BarChart extends JPanel{
 			g.fillRect( origin_x+(i*bar_width), origin_y-bar_height, bar_width, ppp*bar_values.get(i));
 			g.setColor(Color.BLACK);
 			g.drawRect( origin_x+(i*bar_width), origin_y-bar_height, bar_width, ppp*bar_values.get(i));
+			
+			if(showBarValues){
+				g.setColor(Color.WHITE);
+				g.drawString(""+bar_values.get(i), origin_x+(i*bar_width)+bar_width/2-5, origin_y-ppp*bar_values.get(i)/2+5);
+			}
 		}
 		color_inc=0; //comment out this line for resize color strobing
+		
 	}
 	
 	public void addValue(int x){
 		bar_values.add(x);
+	}
+	
+	public void showBarValues(){
+		showBarValues = true;
+	}
+	
+	public void hideBarValues(){
+		showBarValues = false;
 	}
 	
 }
