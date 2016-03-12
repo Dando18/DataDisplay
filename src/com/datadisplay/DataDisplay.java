@@ -49,6 +49,18 @@ public class DataDisplay {
 		return cg;
 	}
 	
+	public BarChart showBarChart(){
+		BarChart bc = new BarChart();
+		frame.getContentPane().add(bc);
+		
+		if(BOXES>1){
+			bc.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+		
+		frame.pack();
+		return bc;
+	}
+	
 	public JFrame getFrame(){
 		return frame;
 	}
