@@ -14,8 +14,8 @@ public class CartesianGraph extends JPanel {
 	
 	public final int PT_WIDTH = 4, PT_HEIGHT = 4;
 	public int ppp = 20;
-	public int origin_x = this.getWidth()/2, origin_y = this.getHeight()/2;
-	public List<Point> pts;
+	private int origin_x = this.getWidth()/2, origin_y = this.getHeight()/2;
+	private List<Point> pts;
 	
 	private Color pt_color = Color.RED;
 	private boolean connectPoints = false;
@@ -51,7 +51,7 @@ public class CartesianGraph extends JPanel {
 		if(showMean){
 			g.setColor(Color.BLUE);
 			g.drawLine(0, (int)(origin_y-(mean*ppp)), this.getWidth(), (int)(origin_y-(mean*ppp)));
-			g.drawString("mean: "+mean, 5, (num_text*15)+10);
+			g.drawString("mean: "+(double)Math.round(mean*1000d)/1000d, 5, (num_text*15)+10);
 			num_text++;
 		}
 		if(showStandardDeviation){
