@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,22 +16,28 @@ public class CartesianGraph extends JPanel {
 	public final int PT_WIDTH = 4, PT_HEIGHT = 4;
 	public int ppp = 20;
 	private int origin_x = this.getWidth()/2, origin_y = this.getHeight()/2;
-	private List<Point> pts;
+	private List<Double> ptx;
+	private List<Double> pty;
+	private int precision = 3;
 	
 	private Color pt_color = Color.RED;
 	private boolean connectPoints = false;
 	private boolean showMean = false;
 	private boolean showStandardDeviation = false;
+	private boolean showLeastSquaresLine = false;
 	
 	//stats
 	private double mean = 0;
 	private double std_dev = 0;
+	private double leastSquaresSlope = 0;
+	private double leastSquaresInt = 0;
 	
 	public CartesianGraph() {
 		
 		this.setBackground(Color.WHITE);
 		
-		pts = new ArrayList<Point>();
+		ptx = new ArrayList<Double>();
+		pty = new ArrayList<Double>();
 	}
 	
 	@Override
@@ -44,43 +49,45 @@ public class CartesianGraph extends JPanel {
 		origin_y = this.getHeight()/2;
 		drawAxes(g2d);
 		drawTicks(g2d);
-		for(int i=0; i<pts.size(); i++){
-			drawPoint(g2d, pts.get(i).x,pts.get(i).y);
-			if(connectPoints && i!=pts.size()-1){
-				g.drawLine(origin_x+(pts.get(i).x*ppp), origin_y-(pts.get(i).y*ppp), 
-						origin_x+(pts.get(i+1).x*ppp), origin_y-(pts.get(i+1).y*ppp));
+		for(int i=0; i<ptx.size(); i++){
+			drawPoint(g2d, ptx.get(i),pty.get(i));
+			if(connectPoints && i!=ptx.size()-1){
+				g.drawLine((int)(origin_x+(ptx.get(i)*ppp)), (int)(origin_y-(pty.get(i)*ppp)), 
+						(int)(origin_x+(ptx.get(i+1)*ppp)), (int)(origin_y-(pty.get(i+1)*ppp)));
 			}
 		}
 		int num_text=1;
 		if(showMean){
-			g.setColor(Color.BLUE);
-			g.drawLine(0, (int)(origin_y-(mean*ppp)), this.getWidth(), (int)(origin_y-(mean*ppp)));
-			g.drawString("mean: "+(double)Math.round(mean*1000d)/1000d, 5, (num_text*15)+10);
-			num_text++;
+			g2d.setColor(Color.BLUE);
+			g2d.drawLine(0, (int)(origin_y-(mean*ppp)), this.getWidth(), (int)(origin_y-(mean*ppp)));
+			g2d.drawString("mean(ȳ): "+MathUtilities.round(mean, precision), 5, (num_text++*15)+10);
 		}
 		if(showStandardDeviation){
-			g.setColor(Color.GREEN);
-			g.drawLine(0, (int)(origin_y-(std_dev*ppp)), this.getWidth(), (int)(origin_y-(std_dev*ppp)));
-			g.drawString("std_dev: "+(double)Math.round(std_dev*1000d)/1000d, 5, (num_text*15)+10);
-			num_text++;
+			g2d.setColor(Color.GREEN);
+			g2d.drawLine(0, (int)(origin_y-(std_dev*ppp)), this.getWidth(), (int)(origin_y-(std_dev*ppp)));
+			g2d.drawString("std_dev(σ): "+MathUtilities.round(std_dev, precision), 5, (num_text++*15)+10);
+		}
+		if(showLeastSquaresLine){
+			g2d.setColor(Color.MAGENTA);
+			g2d.drawLine(0, (int)(origin_y-(-this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)), 
+					this.getWidth(), (int)(origin_y-(this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)));
+			g2d.drawString(
+					"ŷ= "+MathUtilities.round(leastSquaresSlope, precision)+"x + "+MathUtilities.round(leastSquaresInt, precision),
+					5, (num_text++*15)+10);
 		}
 	}
 	
 	public void plot(double x, double y){
-		plot(new Point((int)x,(int)y));
-	}
-	
-	public void plot(Point p){
-		pts.add(p);
+		ptx.add(x);
+		pty.add(y);
 	}
 	
 	public void calculate(){
-		double[] pts_y = new double[pts.size()];
-		for(int i=0; i<pts.size(); i++){
-			pts_y[i] = (double)pts.get(i).y;
-		}
-		mean = MathUtilities.mean(pts_y);
-		std_dev = MathUtilities.std_dev(mean, pts_y);
+		mean = MathUtilities.mean(pty);
+		std_dev = MathUtilities.std_dev(mean, pty);
+		double meanx = MathUtilities.mean(ptx);
+		leastSquaresSlope = MathUtilities.leastSquaresSlope(meanx,ptx,mean,pty);
+		leastSquaresInt = mean - leastSquaresSlope*meanx;
 	}
 	
 	private void drawPoint(Graphics2D g2d, double x, double y){
@@ -123,6 +130,14 @@ public class CartesianGraph extends JPanel {
 		return connectPoints;
 	}
 	
+	public void setPrecision(int precision){
+		this.precision = precision;
+	}
+	
+	public int getPrecision(){
+		return precision;
+	}
+	
 	public void showMean(){
 		calculate();
 		showMean = true;
@@ -139,6 +154,15 @@ public class CartesianGraph extends JPanel {
 	
 	public void hideStandardDeviation(){
 		showStandardDeviation = false;
+	}
+	
+	public void showLeastSquaresLine(){
+		calculate();
+		showLeastSquaresLine = true;
+	}
+	
+	public void hideLeastSquaresLine(){
+		showLeastSquaresLine = false;
 	}
 
 }
