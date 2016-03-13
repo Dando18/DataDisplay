@@ -21,6 +21,7 @@ public class DataDisplay {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("Data Display");
 		frame.setMinimumSize(new Dimension(400,400));
+		frame.setPreferredSize(new Dimension(800,600));
 		if(boxes==2){
 			frame.getContentPane().setLayout(new GridLayout(0,1));
 		}else if(boxes>=3){
@@ -59,6 +60,18 @@ public class DataDisplay {
 		
 		frame.pack();
 		return bc;
+	}
+	
+	public PieChart showPieChart(){
+		PieChart pc = new PieChart();
+		frame.getContentPane().add(pc);
+		
+		if(BOXES>1){
+			pc.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+		
+		frame.pack();
+		return pc;
 	}
 	
 	public JFrame getFrame(){
