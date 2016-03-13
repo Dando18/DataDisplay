@@ -1,6 +1,7 @@
 package com.datadisplay;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -19,6 +20,7 @@ public class BarChart extends JPanel{
 	
 	private List<Integer> bar_values;
 	private boolean showBarValues = false;
+	private String title = "";
 	
 	private Color[] bar_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.PINK};
 	private int color_inc = 0;
@@ -56,6 +58,9 @@ public class BarChart extends JPanel{
 		}
 		color_inc=0; //comment out this line for resize color strobing
 		
+		g2d.setColor(Color.WHITE);
+		FontMetrics fm = g2d.getFontMetrics();
+		g2d.drawString(title, this.getWidth()/2-fm.stringWidth(title)/2, cushion/4+fm.getHeight());
 	}
 	
 	public void addValue(int x){
@@ -67,6 +72,14 @@ public class BarChart extends JPanel{
 		g2d.drawLine(origin_x, origin_y, origin_x, cushion);
 		g2d.drawLine(origin_x, origin_y, this.getWidth()-cushion, origin_y);
 		g2d.drawString(""+ (double)Math.round((origin_y-cushion*2)/ppp*100d)/100d, origin_x-15, cushion-2);
+	}
+	
+	public void setTitle(String title){
+		this.title = title;
+	}
+	
+	public String getTitle(){
+		return title;
 	}
 	
 	public void showBarValues(){
