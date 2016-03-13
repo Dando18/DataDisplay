@@ -25,37 +25,42 @@ public class Test2 {
 		CartesianGraph cg0 = dd.showCartesian();
 		cg0.setConnectPoints(true);
 		int graph_max = 16;
-		for(int i=-graph_max; i<graph_max+1; i+=1){
-			cg0.plot(i, rand.nextInt(5));
+		for(double i=-graph_max; i<graph_max+1; i+=0.5){
+			cg0.plot(i, rand.nextInt(6));
 		}
 		cg0.showMean();
 		cg0.showStandardDeviation();
+		cg0.showLeastSquaresLine();
 		
 		BarChart bc0 = dd.showBarChart();
 		bc0.showBarValues();
-		for(int i=0; i<5; i++){
-			bc0.addValue(rand.nextInt(5)+1);
+		bc0.setTitle("Bar Chart");
+		int numbars = rand.nextInt(8)+1;
+		for(int i=0; i<numbars; i++){
+			bc0.addValue(rand.nextInt(10)+1);
 		}
 		
 		PieChart pc0 = dd.showPieChart();
+		pc0.setTitle("Pie Chart");
 		double sum = 0;
+		int s = 0;
+		String[] str = {"cat", "dog", "animal", "squirrel", "meow", "woof", "squeak", 
+				        "hamster", "taco", "plethera", "kitten", "numbers", "datadisplay"};
 		while(sum<=1){
-			double val = rand.nextDouble()%0.5;
+			double val = rand.nextDouble()%0.35;
 			sum += val;
 			if(sum>1) break;
-			pc0.addPercentage(val);
+			pc0.addValue(str[s++],val);
 		}
 		
 		CartesianGraph cg1 = dd.showCartesian();
 		cg1.setConnectPoints(true);
 		for(int i=-graph_max; i<graph_max+1; i+=1){
-			cg1.plot(i, rand.nextGaussian() *4* ((rand.nextBoolean()) ? 1 : 1));
+			cg1.plot(i, rand.nextGaussian()*3);
 		}
 		cg1.showMean();
 		cg1.showStandardDeviation();
-		
-		
-		
+		cg1.showLeastSquaresLine();
 		
 	}
 	
