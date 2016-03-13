@@ -1,9 +1,11 @@
 package com.datadisplay;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +38,14 @@ public class CartesianGraph extends JPanel {
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		origin_x = this.getWidth()/2;
 		origin_y = this.getHeight()/2;
-		drawAxes(g);
-		drawTicks(g);
+		drawAxes(g2d);
+		drawTicks(g2d);
 		for(int i=0; i<pts.size(); i++){
-			drawPoint(g, pts.get(i).x,pts.get(i).y);
+			drawPoint(g2d, pts.get(i).x,pts.get(i).y);
 			if(connectPoints && i!=pts.size()-1){
 				g.drawLine(origin_x+(pts.get(i).x*ppp), origin_y-(pts.get(i).y*ppp), 
 						origin_x+(pts.get(i+1).x*ppp), origin_y-(pts.get(i+1).y*ppp));
@@ -79,21 +83,24 @@ public class CartesianGraph extends JPanel {
 		std_dev = MathUtilities.std_dev(mean, pts_y);
 	}
 	
-	private void drawPoint(Graphics g, double x, double y){
-		Graphics2D g2d = (Graphics2D) g;
+	private void drawPoint(Graphics2D g2d, double x, double y){
 		g2d.setColor(pt_color);
 		g2d.fillOval((int)(origin_x+(x*ppp)-PT_WIDTH/2), (int)(origin_y-(y*ppp)-PT_HEIGHT/2), PT_WIDTH, PT_HEIGHT);		
 	}
 	
-	private void drawAxes(Graphics g){
-		Graphics2D g2d = (Graphics2D) g;
+	private void drawAxes(Graphics2D g2d){
 		g2d.setColor(Color.BLACK);
 		g2d.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
 		g2d.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
+		
+		String y_str = ""+(double)Math.round((this.getHeight()/2/ppp)*100d)/100d;
+		String x_str = ""+(double)Math.round((this.getWidth()/2/ppp)*100d)/100d;
+		FontMetrics fm = g2d.getFontMetrics();
+		g2d.drawString(y_str, origin_x-fm.stringWidth(y_str)-2, fm.getHeight()+2);
+		g2d.drawString(x_str, this.getWidth()-fm.stringWidth(x_str)-2, origin_y+fm.getHeight()+2);
 	}
 	
-	private void drawTicks(Graphics g){
-		Graphics2D g2d = (Graphics2D) g;
+	private void drawTicks(Graphics2D g2d){
 		// x-axis
 		for(int i=-this.getWidth()/ppp; i<this.getWidth()/ppp;i++){
 			g2d.drawLine(origin_x+(i+1)*ppp, origin_y-5, origin_x+(i+1)*ppp, origin_y+5);
