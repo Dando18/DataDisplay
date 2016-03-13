@@ -16,7 +16,7 @@ public class PieChart extends JPanel{
 	private int cushion = 20;
 	private int key_square = 10;
 	
-	private Color[] pie_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.PINK,Color.MAGENTA};
+	private Color[] pie_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.MAGENTA,Color.PINK};
 	private int color_inc = 0;
 	
 	private List<Double> percentages;
