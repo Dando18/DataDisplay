@@ -22,7 +22,7 @@ public class BarChart extends JPanel{
 	private boolean showBarValues = false;
 	private String title = "";
 	
-	private Color[] bar_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.PINK};
+	private Color[] bar_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.MAGENTA,Color.PINK};
 	private int color_inc = 0;
 	
 	public BarChart(){
