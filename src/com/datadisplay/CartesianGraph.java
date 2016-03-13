@@ -15,6 +15,8 @@ public class CartesianGraph extends JPanel {
 	
 	public final int PT_WIDTH = 4, PT_HEIGHT = 4;
 	public int ppp = 20;
+	public int x_scale = 1;
+	public int y_scale = 1;
 	private int origin_x = this.getWidth()/2, origin_y = this.getHeight()/2;
 	private List<Double> ptx;
 	private List<Double> pty;
@@ -52,25 +54,25 @@ public class CartesianGraph extends JPanel {
 		for(int i=0; i<ptx.size(); i++){
 			drawPoint(g2d, ptx.get(i),pty.get(i));
 			if(connectPoints && i!=ptx.size()-1){
-				g.drawLine((int)(origin_x+(ptx.get(i)*ppp)), (int)(origin_y-(pty.get(i)*ppp)), 
-						(int)(origin_x+(ptx.get(i+1)*ppp)), (int)(origin_y-(pty.get(i+1)*ppp)));
+				g.drawLine((int)(origin_x+(ptx.get(i)*ppp)/x_scale), (int)(origin_y-(pty.get(i)*ppp)/y_scale), 
+						(int)(origin_x+(ptx.get(i+1)*ppp)/x_scale), (int)(origin_y-(pty.get(i+1)*ppp)/y_scale));
 			}
 		}
 		int num_text=1;
 		if(showMean){
 			g2d.setColor(Color.BLUE);
-			g2d.drawLine(0, (int)(origin_y-(mean*ppp)), this.getWidth(), (int)(origin_y-(mean*ppp)));
+			g2d.drawLine(0, (int)(origin_y-(mean*ppp)/y_scale), this.getWidth(), (int)(origin_y-(mean*ppp)/y_scale));
 			g2d.drawString("mean(ȳ): "+MathUtilities.round(mean, precision), 5, (num_text++*15)+10);
 		}
 		if(showStandardDeviation){
 			g2d.setColor(Color.GREEN);
-			g2d.drawLine(0, (int)(origin_y-(std_dev*ppp)), this.getWidth(), (int)(origin_y-(std_dev*ppp)));
+			g2d.drawLine(0, (int)(origin_y-(std_dev*ppp)/y_scale), this.getWidth(), (int)(origin_y-(std_dev*ppp)/y_scale));
 			g2d.drawString("std_dev(σ): "+MathUtilities.round(std_dev, precision), 5, (num_text++*15)+10);
 		}
 		if(showLeastSquaresLine){
 			g2d.setColor(Color.MAGENTA);
-			g2d.drawLine(0, (int)(origin_y-(-this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)), 
-					this.getWidth(), (int)(origin_y-(this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)));
+			g2d.drawLine(0, (int)(origin_y-(-this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)/y_scale), 
+					this.getWidth(), (int)(origin_y-(this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)/y_scale));
 			g2d.drawString(
 					"ŷ= "+MathUtilities.round(leastSquaresSlope, precision)+"x + "+MathUtilities.round(leastSquaresInt, precision),
 					5, (num_text++*15)+10);
@@ -92,7 +94,7 @@ public class CartesianGraph extends JPanel {
 	
 	private void drawPoint(Graphics2D g2d, double x, double y){
 		g2d.setColor(pt_color);
-		g2d.fillOval((int)(origin_x+(x*ppp)-PT_WIDTH/2), (int)(origin_y-(y*ppp)-PT_HEIGHT/2), PT_WIDTH, PT_HEIGHT);		
+		g2d.fillOval((int)(origin_x+(x*ppp)/x_scale-PT_WIDTH/2), (int)(origin_y-(y*ppp)/y_scale-PT_HEIGHT/2), PT_WIDTH, PT_HEIGHT);		
 	}
 	
 	private void drawAxes(Graphics2D g2d){
@@ -100,11 +102,13 @@ public class CartesianGraph extends JPanel {
 		g2d.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
 		g2d.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
 		
-		String y_str = ""+(double)Math.round((this.getHeight()/2/ppp)*100d)/100d;
-		String x_str = ""+(double)Math.round((this.getWidth()/2/ppp)*100d)/100d;
+		String x_str = ""+MathUtilities.round(getMaxX(), precision);
+		String y_str = ""+MathUtilities.round(getMaxY(), precision);
 		FontMetrics fm = g2d.getFontMetrics();
 		g2d.drawString(y_str, origin_x-fm.stringWidth(y_str)-2, fm.getHeight()+2);
 		g2d.drawString(x_str, this.getWidth()-fm.stringWidth(x_str)-2, origin_y+fm.getHeight()+2);
+		g2d.drawString("x_scale: "+x_scale, this.getWidth()-fm.stringWidth("x_scale: "+x_scale)-5, fm.getHeight());
+		g2d.drawString("y_scale: "+y_scale, this.getWidth()-fm.stringWidth("y_scale: "+y_scale)-5, fm.getHeight()*2);
 	}
 	
 	private void drawTicks(Graphics2D g2d){
@@ -112,6 +116,18 @@ public class CartesianGraph extends JPanel {
 		for(int i=-this.getWidth()/ppp; i<this.getWidth()/ppp;i++){
 			g2d.drawLine(origin_x+(i+1)*ppp, origin_y-5, origin_x+(i+1)*ppp, origin_y+5);
 		}
+		// y-axis
+		for(int i=-this.getHeight()/ppp; i<this.getHeight()/ppp;i++){
+			g2d.drawLine(origin_x-5, origin_y-(i+1)*ppp, origin_x+5, origin_y-(i+1)*ppp);
+		}
+	}
+	
+	public double getMaxX(){
+		return (this.getWidth()/2)/ppp*x_scale;
+	}
+	
+	public double getMaxY(){
+		return (this.getHeight()/2)/ppp*y_scale;
 	}
 	
 	public void setPointColor(Color c){
