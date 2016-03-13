@@ -23,10 +23,15 @@ public class Test2 {
 		DataDisplay dd = new DataDisplay(4);
 		
 		CartesianGraph cg0 = dd.showCartesian();
-		cg0.setConnectPoints(true);
+		cg0.setConnectPoints(false);
 		int graph_max = 16;
-		for(double i=-graph_max; i<graph_max+1; i+=0.5){
-			cg0.plot(i, rand.nextInt(6));
+//		for(double i=-graph_max; i<graph_max+1; i+=0.5){
+//			cg0.plot(i, (rand.nextInt(2)+rand.nextDouble())*i);
+//		}
+		cg0.x_scale = 2;
+		cg0.y_scale = 4;
+		for(double i=-32; i<32; i+=0.5){
+			cg0.plot(i, i+Math.cos(i));
 		}
 		cg0.showMean();
 		cg0.showStandardDeviation();
@@ -35,7 +40,7 @@ public class Test2 {
 		BarChart bc0 = dd.showBarChart();
 		bc0.showBarValues();
 		bc0.setTitle("Bar Chart");
-		int numbars = rand.nextInt(8)+1;
+		int numbars = rand.nextInt(7)+5;
 		for(int i=0; i<numbars; i++){
 			bc0.addValue(rand.nextInt(10)+1);
 		}
@@ -43,14 +48,12 @@ public class Test2 {
 		PieChart pc0 = dd.showPieChart();
 		pc0.setTitle("Pie Chart");
 		double sum = 0;
-		int s = 0;
-		String[] str = {"cat", "dog", "animal", "squirrel", "meow", "woof", "squeak", 
-				        "hamster", "taco", "plethera", "kitten", "numbers", "datadisplay"};
+		int s=0;
 		while(sum<=1){
 			double val = rand.nextDouble()%0.35;
 			sum += val;
 			if(sum>1) break;
-			pc0.addValue(str[s++],val);
+			pc0.addValue("p"+s++,val);
 		}
 		
 		CartesianGraph cg1 = dd.showCartesian();
