@@ -74,6 +74,18 @@ public class DataDisplay {
 		return pc;
 	}
 	
+	public PolarGraph showPolarGraph(){
+		PolarGraph pg = new PolarGraph();
+		frame.getContentPane().add(pg);
+		
+		if(BOXES>1){
+			pg.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+		
+		frame.pack();
+		return pg;
+	}
+	
 	public JFrame getFrame(){
 		return frame;
 	}
