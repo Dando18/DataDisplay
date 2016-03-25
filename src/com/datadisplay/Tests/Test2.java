@@ -28,10 +28,10 @@ public class Test2 {
 //		for(double i=-graph_max; i<graph_max+1; i+=0.5){
 //			cg0.plot(i, (rand.nextInt(2)+rand.nextDouble())*i);
 //		}
-		cg0.x_scale = 2;
-		cg0.y_scale = 4;
+		cg0.x_scale = 4;
+		cg0.y_scale = 3;
 		for(double i=-32; i<32; i+=0.5){
-			cg0.plot(i, i+Math.cos(i));
+			cg0.plot(i, i+Math.sin(i));
 		}
 		cg0.showMean();
 		cg0.showStandardDeviation();
@@ -40,9 +40,10 @@ public class Test2 {
 		BarChart bc0 = dd.showBarChart();
 		bc0.showBarValues();
 		bc0.setTitle("Bar Chart");
+		bc0.showBarTitles();
 		int numbars = rand.nextInt(7)+5;
 		for(int i=0; i<numbars; i++){
-			bc0.addValue(rand.nextInt(10)+1);
+			bc0.addValue(rand.nextInt(10)+1, "p"+i);
 		}
 		
 		PieChart pc0 = dd.showPieChart();
