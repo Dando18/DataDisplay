@@ -71,8 +71,8 @@ public class CartesianGraph extends JPanel {
 		}
 		if(showLeastSquaresLine){
 			g2d.setColor(Color.MAGENTA);
-			g2d.drawLine(0, (int)(origin_y-(-this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)/y_scale), 
-					this.getWidth(), (int)(origin_y-(this.getWidth()*leastSquaresSlope/2+ppp*leastSquaresInt)/y_scale));
+			g2d.drawLine(0, (int)((origin_y-(-this.getWidth()/2*leastSquaresSlope*x_scale/y_scale + ppp*leastSquaresInt/y_scale))), 
+					this.getWidth(), (int)((origin_y-(this.getWidth()/2*leastSquaresSlope*x_scale/y_scale + ppp*leastSquaresInt/y_scale))));
 			g2d.drawString(
 					"ŷ= "+MathUtilities.round(leastSquaresSlope, precision)+"x + "+MathUtilities.round(leastSquaresInt, precision),
 					5, (num_text++*15)+10);
@@ -108,7 +108,9 @@ public class CartesianGraph extends JPanel {
 		g2d.drawString(y_str, origin_x-fm.stringWidth(y_str)-2, fm.getHeight()+2);
 		g2d.drawString(x_str, this.getWidth()-fm.stringWidth(x_str)-2, origin_y+fm.getHeight()+2);
 		g2d.drawString("x_scale: "+x_scale, this.getWidth()-fm.stringWidth("x_scale: "+x_scale)-5, fm.getHeight());
+		g2d.drawString(""+x_scale, origin_x+ppp-fm.stringWidth(""+x_scale)/2, origin_y+fm.getHeight()+5);
 		g2d.drawString("y_scale: "+y_scale, this.getWidth()-fm.stringWidth("y_scale: "+y_scale)-5, fm.getHeight()*2);
+		g2d.drawString(""+y_scale, origin_x-fm.stringWidth(""+y_scale)-8, origin_y-ppp+fm.getHeight()/4);
 	}
 	
 	private void drawTicks(Graphics2D g2d){
@@ -126,8 +128,16 @@ public class CartesianGraph extends JPanel {
 		return (this.getWidth()/2)/ppp*x_scale;
 	}
 	
+	public void setMaxX(double max){
+		x_scale = (int)((2*ppp*max)/this.getWidth());
+	}
+	
 	public double getMaxY(){
 		return (this.getHeight()/2)/ppp*y_scale;
+	}
+	
+	public void setMaxY(double max){
+		y_scale = (int)((2*ppp*max)/this.getHeight());
 	}
 	
 	public void setPointColor(Color c){
