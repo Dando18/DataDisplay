@@ -19,7 +19,9 @@ public class BarChart extends JPanel{
 	private int ppp = 20;
 	
 	private List<Integer> bar_values;
+	private List<String> titles;
 	private boolean showBarValues = false;
+	private boolean showBarTitles = false;
 	private String title = "";
 	
 	private Color[] bar_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.MAGENTA,Color.PINK};
@@ -30,6 +32,7 @@ public class BarChart extends JPanel{
 		this.setBackground(Color.LIGHT_GRAY);
 		
 		bar_values = new ArrayList<Integer>();
+		titles = new ArrayList<String>();
 		
 	}
 	
@@ -55,6 +58,12 @@ public class BarChart extends JPanel{
 				g2d.setColor(Color.WHITE);
 				g2d.drawString(""+bar_values.get(i), origin_x+(i*bar_width)+bar_width/2-5, origin_y-ppp*bar_values.get(i)/2+5);
 			}
+			if(showBarTitles){
+				FontMetrics fm = g2d.getFontMetrics();
+				g2d.setColor(Color.WHITE);
+				g2d.drawString(titles.get(i), origin_x+(i*bar_width)+bar_width/2-fm.stringWidth(titles.get(i))/2, 
+						origin_y-ppp*bar_values.get(i)-fm.getHeight());
+			}
 		}
 		color_inc=0; //comment out this line for resize color strobing
 		
@@ -63,8 +72,13 @@ public class BarChart extends JPanel{
 		g2d.drawString(title, this.getWidth()/2-fm.stringWidth(title)/2, cushion/4+fm.getHeight());
 	}
 	
-	public void addValue(int x){
+	public void addValue(int x, String title){
 		bar_values.add(x);
+		titles.add(title);
+	}
+	
+	public void addValue(int x){
+		addValue(x,"");
 	}
 	
 	private void drawAxes(Graphics2D g2d){
@@ -88,6 +102,14 @@ public class BarChart extends JPanel{
 	
 	public void hideBarValues(){
 		showBarValues = false;
+	}
+	
+	public void showBarTitles(){
+		showBarTitles = true;
+	}
+	
+	public void hideBarTitles(){
+		showBarTitles = false;
 	}
 	
 }
