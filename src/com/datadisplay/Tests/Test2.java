@@ -62,12 +62,12 @@ public class Test2 {
 		for(int i=-graph_max; i<graph_max+1; i+=1){
 			cg1.plot(i, rand.nextGaussian()*3);
 		}
-		cg1.showMean();
-		cg1.showStandardDeviation();
-		cg1.showLeastSquaresLine();
+		cg1.interpolatePoints();
+		cg1.showEquation();
 		cg1.showLabels();
+		cg1.showGrid();
 		
-		bc0.animate(2, 3, 500, 2000);
+		//bc0.animate(2, 3, 500, 2000);
 		//cg1.animate(graph_max*2-5, 0, 0, 4000, 2000);
 
 		
