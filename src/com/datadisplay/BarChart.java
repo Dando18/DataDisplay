@@ -8,9 +8,7 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JPanel;
-
-public class BarChart extends JPanel{
+public class BarChart extends DataPanel{
 	private static final long serialVersionUID = 1L;
 
 	private int cushion = 20;
@@ -28,6 +26,7 @@ public class BarChart extends JPanel{
 	private int color_inc = 0;
 	
 	public BarChart(){
+		super();
 		
 		this.setBackground(Color.LIGHT_GRAY);
 		
@@ -86,6 +85,36 @@ public class BarChart extends JPanel{
 		g2d.drawLine(origin_x, origin_y, origin_x, cushion);
 		g2d.drawLine(origin_x, origin_y, this.getWidth()-cushion, origin_y);
 		g2d.drawString(""+ (double)Math.round((origin_y-cushion*2)/ppp*100d)/100d, origin_x-15, cushion-2);
+	}
+	
+	public void animate(int bar, float value, float duration, float delay){
+		Thread t = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				int step = 1;
+				int steps = (int)(Math.abs(value-bar_values.get(bar))/step+0.5);
+				float step_time = duration/steps;
+				
+				try{
+					Thread.sleep((long) delay);
+					for(int i=0; i<steps;i++){
+						if(bar_values.get(bar)<value){
+							bar_values.set(bar, bar_values.get(bar)+step);
+						}else if(bar_values.get(bar)>value){
+							bar_values.set(bar, bar_values.get(bar)-step);
+						}
+						repaint();
+						Thread.sleep((long) step_time);
+					}
+				}catch(InterruptedException ex){
+					ex.printStackTrace();
+				}
+			}
+			
+		});
+		t.start();
+
 	}
 	
 	public void setTitle(String title){
