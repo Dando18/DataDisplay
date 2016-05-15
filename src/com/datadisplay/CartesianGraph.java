@@ -153,7 +153,7 @@ public class CartesianGraph extends DataPanel {
 			}
 			if(showLabels){
 				g2d.setFont(new Font(g2d.getFont().getFontName(),g2d.getFont().getStyle(),g2d.getFont().getSize()/2));
-				g2d.drawString("("+MathUtilities.round(ptx.get(i), 3)+","+MathUtilities.round(pty.get(i), 3)+")",
+				g2d.drawString("("+MathUtilities.round(ptx.get(i), precision)+","+MathUtilities.round(pty.get(i), precision)+")",
 						(int)(origin_x+(ptx.get(i)*ppp)/x_scale-PT_WIDTH/2),(int)(origin_y-(pty.get(i)*ppp)/y_scale-PT_HEIGHT/2));
 				g2d.setFont(new Font(g2d.getFont().getFontName(),g2d.getFont().getStyle(),g2d.getFont().getSize()*2));
 			}
@@ -179,7 +179,8 @@ public class CartesianGraph extends DataPanel {
 		}
 		if(showEquation){
 			if(pflf != null){
-				int width = 300;
+				int width = this.getWidth()/2-10;
+				g2d.setFont(new Font(g2d.getFont().getName(),g2d.getFont().getStyle(),g2d.getFont().getSize()-3));
 				String eq = "";
 				String cur = "";
 				for(int i=0; i<coeff.length; i++){
@@ -201,6 +202,7 @@ public class CartesianGraph extends DataPanel {
 				g2d.drawRect(3, (num_text)*15+10, width, g2d.getFontMetrics().getHeight()*eq.split("\n").length+5);
 				g2d.setColor(Color.RED);
 				GUIUtilities.drawString(g2d, eq, 5, (num_text++*15)+10);
+				g2d.setFont(new Font(g2d.getFont().getName(),g2d.getFont().getStyle(),g2d.getFont().getSize()+3));
 			}
 		}
 	}
@@ -352,6 +354,7 @@ public class CartesianGraph extends DataPanel {
 	}
 	
 	private void interpolate(Graphics2D g2d){
+		if(inter_x==null) return;
 		for(int i=0; i<inter_x.length-1; i++){
 			g2d.drawLine((int)(origin_x+(inter_x[i]*ppp)/x_scale), (int)(origin_y-(inter_y[i]*ppp)/y_scale),
 					(int)(origin_x+(inter_x[i+1]*ppp)/x_scale), (int)(origin_y-(inter_y[i+1]*ppp)/y_scale));
@@ -404,6 +407,7 @@ public class CartesianGraph extends DataPanel {
 	
 	public void linearInterpolation(){
 		interpolate = false;
+		calculate();
 	}
 	
 	public void showEquation(){
