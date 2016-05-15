@@ -8,9 +8,7 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JPanel;
-
-public class PieChart extends JPanel{
+public class PieChart extends DataPanel{
 	private static final long serialVersionUID = 1L;
 	
 	private int cushion = 20;
@@ -25,6 +23,7 @@ public class PieChart extends JPanel{
 	private String title = "";
 	
 	public PieChart(){
+		super();
 		
 		this.setBackground(Color.WHITE);
 		
