@@ -65,6 +65,11 @@ public class Test2 {
 		cg1.showMean();
 		cg1.showStandardDeviation();
 		cg1.showLeastSquaresLine();
+		cg1.showLabels();
+		
+		bc0.animate(2, 3, 500, 2000);
+		//cg1.animate(graph_max*2-5, 0, 0, 4000, 2000);
+
 		
 	}
 	
