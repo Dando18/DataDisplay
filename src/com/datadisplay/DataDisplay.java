@@ -86,6 +86,18 @@ public class DataDisplay {
 		return pg;
 	}
 	
+	public ImageView showImageView(){
+		ImageView iv = new ImageView();
+		frame.getContentPane().add(iv);
+		
+		if(BOXES>1){
+			iv.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+		
+		frame.pack();
+		return iv;
+	}
+	
 	public JFrame getFrame(){
 		return frame;
 	}
