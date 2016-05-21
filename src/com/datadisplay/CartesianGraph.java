@@ -13,7 +13,11 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingWorker;
+
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
+
+import com.datadisplay.function.Function;
 
 public class CartesianGraph extends DataPanel {
 	private static final long serialVersionUID = 1L;
@@ -31,6 +35,8 @@ public class CartesianGraph extends DataPanel {
 	
 	private Color pt_color = Color.RED;
 	private boolean connectPoints = false;
+	private boolean showPoints = true;
+	private boolean canEdit = true;
 	private boolean interpolate = false;
 	private boolean showEquation = false;
 	private boolean showMean = false;
@@ -40,6 +46,7 @@ public class CartesianGraph extends DataPanel {
 	private boolean showGrid = false;
 	
 	private boolean drag_pt = false;
+	private boolean pressed = false;
 	private int hover = Cursor.HAND_CURSOR;
 	private int drag_index = -1;
 	
@@ -64,8 +71,12 @@ public class CartesianGraph extends DataPanel {
 			@Override
 			public void mousePressed(MouseEvent e){
 				double[] pts = mouseToCoordinate(e.getX(),e.getY());
+				if(!pressed){
+					pressed = true;
+					repaint();
+				}
 				for(int i=0; i<ptx.size(); i++){
-					if((Math.abs(pts[0]-ptx.get(i))<=0.2) && (Math.abs(pts[1]-pty.get(i))<=0.2)){
+					if((Math.abs(pts[0]-ptx.get(i))<=0.2) && (Math.abs(pts[1]-pty.get(i))<=0.2) && canEdit){
 						drag_pt = true;
 						drag_index = i;
 						break;
@@ -74,6 +85,10 @@ public class CartesianGraph extends DataPanel {
 			}
 			@Override
 			public void mouseReleased(MouseEvent e){
+				if(pressed){
+					pressed = false;
+					repaint();
+				}
 				if(drag_pt){
 					calculate();
 					repaint();
@@ -107,8 +122,9 @@ public class CartesianGraph extends DataPanel {
 					
 					if(!interpolate)
 						calculate();
-					repaint();
+					//repaint();
 				}
+				repaint();
 			}
 			@Override
 			public void mouseMoved(MouseEvent e){
@@ -142,21 +158,31 @@ public class CartesianGraph extends DataPanel {
 		drawAxes(g2d);
 		drawTicks(g2d);
 		for(int i=0; i<ptx.size(); i++){
-			drawPoint(g2d, ptx.get(i),pty.get(i));
-			if(connectPoints && i!=ptx.size()-1){
-				if(interpolate){
-					interpolate(g2d);
-				}else{
-					g.drawLine((int)(origin_x+(ptx.get(i)*ppp)/x_scale), (int)(origin_y-(pty.get(i)*ppp)/y_scale), 
-						(int)(origin_x+(ptx.get(i+1)*ppp)/x_scale), (int)(origin_y-(pty.get(i+1)*ppp)/y_scale));
+			if(i!=ptx.size()-1 && (onScreen(ptx.get(i+1),pty.get(i+1)) || onScreen(ptx.get(i),pty.get(i))) ){
+				if(showPoints){
+					drawPoint(g2d, ptx.get(i),pty.get(i));
+				}
+				if(connectPoints && i!=ptx.size()-1){
+					if(interpolate){
+						interpolate(g2d);
+					}else{
+						g.drawLine((int)(origin_x+(ptx.get(i)*ppp)/x_scale), (int)(origin_y-(pty.get(i)*ppp)/y_scale), 
+							(int)(origin_x+(ptx.get(i+1)*ppp)/x_scale), (int)(origin_y-(pty.get(i+1)*ppp)/y_scale));
+					}
+				}
+				if(showLabels){
+					g2d.setFont(new Font(g2d.getFont().getFontName(),g2d.getFont().getStyle(),g2d.getFont().getSize()/2));
+					g2d.drawString("("+MathUtilities.round(ptx.get(i), precision)+","+MathUtilities.round(pty.get(i), precision)+")",
+							(int)(origin_x+(ptx.get(i)*ppp)/x_scale-PT_WIDTH/2),(int)(origin_y-(pty.get(i)*ppp)/y_scale-PT_HEIGHT/2));
+					g2d.setFont(new Font(g2d.getFont().getFontName(),g2d.getFont().getStyle(),g2d.getFont().getSize()*2));
 				}
 			}
-			if(showLabels){
-				g2d.setFont(new Font(g2d.getFont().getFontName(),g2d.getFont().getStyle(),g2d.getFont().getSize()/2));
-				g2d.drawString("("+MathUtilities.round(ptx.get(i), precision)+","+MathUtilities.round(pty.get(i), precision)+")",
-						(int)(origin_x+(ptx.get(i)*ppp)/x_scale-PT_WIDTH/2),(int)(origin_y-(pty.get(i)*ppp)/y_scale-PT_HEIGHT/2));
-				g2d.setFont(new Font(g2d.getFont().getFontName(),g2d.getFont().getStyle(),g2d.getFont().getSize()*2));
-			}
+		}
+		if(pressed){
+			float x = (float) this.getMousePosition().getX();
+			float y = (float) this.getMousePosition().getY();
+			double[] pts = mouseToCoordinate(x,y);
+			g2d.drawString("("+MathUtilities.round(pts[0], precision)+","+MathUtilities.round(pts[1], precision)+")",x,y);
 		}
 		int num_text=1;
 		if(showMean){
@@ -210,6 +236,36 @@ public class CartesianGraph extends DataPanel {
 	public void plot(double x, double y){
 		ptx.add(x);
 		pty.add(y);
+	}
+	
+	public void plot(List<Double> x, List<Double> y){
+		ptx.addAll(x);
+		pty.addAll(y);
+	}
+	
+	public void plot(Function f, double p){
+		
+		SwingWorker<Void,Void> sw = new SwingWorker<Void,Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				double step = x_scale/p;
+				double max = getMaxX();
+				for(double i=-max; i<max; i+=step){
+					ptx.add(i);
+					pty.add(f.evaluate(i));
+				}
+				return null;
+			}
+			
+		};
+		hidePoints();
+		setConnectPoints(true);
+		sw.execute();
+	}
+	
+	public void plot(Function f){
+		plot(f,5.0);
 	}
 	
 	public void calculate(){
@@ -368,6 +424,14 @@ public class CartesianGraph extends DataPanel {
 		return pts;
 	}
 	
+	public boolean offScreen(double x, double y){
+		return x<-getMaxX() || x>getMaxX() || y<-getMaxY() || y>getMaxY();
+	}
+	
+	public boolean onScreen(double x, double y){
+		return !offScreen(x,y);
+	}
+	
 	public double getMaxX(){
 		return (this.getWidth()/2)/ppp*x_scale;
 	}
@@ -398,6 +462,22 @@ public class CartesianGraph extends DataPanel {
 	
 	public Boolean getConnectPoints(){
 		return connectPoints;
+	}
+	
+	public void showPoints(){
+		showPoints = true;
+	}
+	
+	public void hidePoints(){
+		showPoints = false;
+	}
+	
+	public void setEditable(boolean b){
+		canEdit = b;
+	}
+	
+	public boolean getEditable(){
+		return canEdit;
 	}
 	
 	public void interpolatePoints(){
