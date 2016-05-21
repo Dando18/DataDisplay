@@ -16,6 +16,7 @@ public class DataDisplay {
 	
 	public DataDisplay(int boxes){
 		BOXES = boxes;
+		
 		frame = new JFrame();
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
