@@ -21,6 +21,12 @@ public static void main(String[] args) {
 		bawp.addPlot(p1);
 		
 		bawp.addValues(1.0, 3.0, 5.0, 34.0, 8.0, 12.0);
+		
+		ArrayList<Double> p2 = new ArrayList<Double>();
+		for(int i=0; i<50; i++){
+			p2.add((Math.random()*50));
+		}
+		bawp.addPlot(p2);
 	}
 	
 }
