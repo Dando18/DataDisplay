@@ -18,11 +18,11 @@ public class TestFunction {
 		Function f = new Function(new FunctionInterface(){
 			@Override
 			public double f(double x) {
-				return (1.0/3.0)*x*x*x;
+				return 1.0/Math.cos(x);
 			}
 		});
 		
-		cg.plot(f);
+		cg.plot(f,15);
 		ArrayList<ArrayList<Double>> ddx = f.ddx(-cg.getMaxX(), cg.getMaxX(), 0.1);
 		cg.plot(ddx.get(0),ddx.get(1));
 		cg.setEditable(false);
