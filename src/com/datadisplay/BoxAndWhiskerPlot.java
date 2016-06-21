@@ -19,6 +19,10 @@ public class BoxAndWhiskerPlot extends DataPanel {
 	private final int PADDING = 20;
 	private final int origin_x = PADDING;
 	private int origin_y = getHeight() - PADDING;
+	
+	private Color box_color = Color.BLACK;
+	private Color axes_color = Color.BLACK;
+	private Color tick_color = Color.BLACK;
 
 	private class Box {
 		public double min;
@@ -107,18 +111,21 @@ public class BoxAndWhiskerPlot extends DataPanel {
 
 		drawAxes(g2d);
 		drawTicks(g2d);
-
+		
+		g2d.setColor(box_color);
 		for (int i = 0; i < plots.size(); i++) {
 			plot(g2d, plots.get(i), data.get(i), i);
 		}
 	}
 
 	private void drawAxes(Graphics2D g2d) {
+		g2d.setColor(axes_color);
 		g2d.drawLine(PADDING, PADDING, PADDING, getHeight() - PADDING);
 		g2d.drawLine(PADDING, getHeight() - PADDING, getWidth() - PADDING, getHeight() - PADDING);
 	}
 
 	private void drawTicks(Graphics2D g2d){
+		g2d.setColor(tick_color);
 		int tickheight = 5;
 		for(int i=0; i<(getWidth()-PADDING*2)/ppp;i++){
 			g2d.drawLine(origin_x+(i+1)*ppp, origin_y-tickheight, origin_x+(i+1)*ppp, origin_y+tickheight);
@@ -157,6 +164,55 @@ public class BoxAndWhiskerPlot extends DataPanel {
 
 	private int getBarHeight() {
 		return (getHeight() - PADDING * 2) / (plots.size()) - PADDING;
+	}
+
+	/**
+	 * @return the box_color
+	 */
+	public Color getBox_color() {
+		return box_color;
+	}
+
+	/**
+	 * @param box_color the box_color to set
+	 */
+	public void setBox_color(Color box_color) {
+		this.box_color = box_color;
+	}
+
+	/**
+	 * @return the axes_color
+	 */
+	public Color getAxes_color() {
+		return axes_color;
+	}
+
+	/**
+	 * @param axes_color the axes_color to set
+	 */
+	public void setAxes_color(Color axes_color) {
+		this.axes_color = axes_color;
+	}
+
+	/**
+	 * @return the tick_color
+	 */
+	public Color getTick_color() {
+		return tick_color;
+	}
+
+	/**
+	 * @param tick_color the tick_color to set
+	 */
+	public void setTick_color(Color tick_color) {
+		this.tick_color = tick_color;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }
