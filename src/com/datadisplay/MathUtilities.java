@@ -1,5 +1,6 @@
 package com.datadisplay;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -90,4 +91,39 @@ public class MathUtilities {
 		double precm = Math.pow(10, prec);
 		return (double) Math.round(x*precm)/precm;
 	}
+	
+	public static double min(ArrayList<Double> a){
+		double min = a.get(0);
+		for(int i=1; i<a.size(); i++){
+			if(a.get(i)<min){
+				min = a.get(i);
+			}
+		}
+		return min;
+	}
+	
+	public static double max(ArrayList<Double> a){
+		double max = a.get(0);
+		for(int i=1; i<a.size(); i++){
+			if(a.get(i)>max){
+				max = a.get(i);
+			}
+		}
+		return max;
+	}
+	
+	public static double median(List<Double> a){
+		if(a.size()==0) throw new IllegalArgumentException("List must be occupied");
+		if(a.size()==1) return a.get(0);
+		if(a.size()%2==0){
+			return (a.get(a.size()/2-1)+a.get(a.size()/2))/2.0;
+		}
+		return a.get(a.size()/2);
+	}
+	
+	public static int medianIndex(List<Double> a){
+		if(a.size()==0) throw new IllegalArgumentException("List must be occupied");
+		return a.size()/2;
+	}
+	
 }
