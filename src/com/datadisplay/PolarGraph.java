@@ -24,6 +24,9 @@ public class PolarGraph extends JPanel{
 	private boolean connectPoints = false;
 	public boolean epilepsy = false;
 	
+	/**
+	 *  __init__
+	 */
 	public PolarGraph() {
 		
 		this.setBackground(Color.WHITE);
@@ -85,32 +88,61 @@ public class PolarGraph extends JPanel{
 		}
 	}
 	
+	/**
+	 * plot polar coordinate (r,theta)
+	 * @param r r value of coordinate (radius)
+	 * @param theta theta value of coordinate in radians (angle) NOTE: [theta %= 2*PI]
+	 */
 	public void plot(double r, double theta){
 		theta %= (2*Math.PI);
 		ptr.add(r);
 		ptt.add(theta);
 	}
 	
+	/**
+	 * 
+	 * @return maximum radius in panel size
+	 */
 	public double getMaxR(){
 		return (this.getWidth()/2)/ppp*scale;
 	}
 	
+	/**
+	 * 
+	 * @param max value to set maximum radius in panel size
+	 */
 	public void setMaxR(double max){
 		scale = (int)((2*ppp*max)/this.getWidth());
 	}
 	
+	/**
+	 * 
+	 * @param c color to set points
+	 */
 	public void setPointColor(Color c){
 		pt_color = c;
 	}
 	
+	/**
+	 * 
+	 * @return Color of points
+	 */
 	public Color getPointColor(){
 		return pt_color;
 	}
 	
+	/**
+	 * 
+	 * @param b if true, points will be sequentially connected by lines in the order they're added
+	 */
 	public void setConnectPoints(Boolean b){
 		connectPoints = b;
 	}
 	
+	/**
+	 * 
+	 * @return returns true if the lines are to be connected
+	 */
 	public Boolean getConnectPoints(){
 		return connectPoints;
 	}
