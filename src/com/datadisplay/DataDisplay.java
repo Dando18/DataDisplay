@@ -99,6 +99,18 @@ public class DataDisplay {
 		return iv;
 	}
 	
+	public BoxAndWhiskerPlot showBoxAndWhiskerPlot(){
+		BoxAndWhiskerPlot bawp = new BoxAndWhiskerPlot();
+		frame.getContentPane().add(bawp);
+		
+		if(BOXES>1){
+			bawp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+		
+		frame.pack();
+		return bawp;
+	}
+	
 	public JFrame getFrame(){
 		return frame;
 	}
