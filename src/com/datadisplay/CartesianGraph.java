@@ -34,6 +34,7 @@ public class CartesianGraph extends DataPanel {
 	private int precision = 3;
 	
 	private Color pt_color = Color.RED;
+	private Color line_color = Color.RED;
 	private boolean connectPoints = false;
 	private boolean showPoints = true;
 	private boolean canEdit = true;
@@ -163,10 +164,11 @@ public class CartesianGraph extends DataPanel {
 					drawPoint(g2d, ptx.get(i),pty.get(i));
 				}
 				if(connectPoints && i!=ptx.size()-1){
+					g2d.setColor(line_color);
 					if(interpolate){
 						interpolate(g2d);
 					}else{
-						g.drawLine((int)(origin_x+(ptx.get(i)*ppp)/x_scale), (int)(origin_y-(pty.get(i)*ppp)/y_scale), 
+						g2d.drawLine((int)(origin_x+(ptx.get(i)*ppp)/x_scale), (int)(origin_y-(pty.get(i)*ppp)/y_scale), 
 							(int)(origin_x+(ptx.get(i+1)*ppp)/x_scale), (int)(origin_y-(pty.get(i+1)*ppp)/y_scale));
 					}
 				}
@@ -233,16 +235,31 @@ public class CartesianGraph extends DataPanel {
 		}
 	}
 	
+	/**
+	 * Plots the point (x,y)
+	 * @param x x coordinate to be plotted
+	 * @param y y coordinate to be plotted
+	 */
 	public void plot(double x, double y){
 		ptx.add(x);
 		pty.add(y);
 	}
 	
+	/**
+	 * Plots a list of points (x,y)
+	 * @param x x coordinates to be plotted
+	 * @param y y coordinates to be plotted
+	 */
 	public void plot(List<Double> x, List<Double> y){
 		ptx.addAll(x);
 		pty.addAll(y);
 	}
 	
+	/**
+	 * Plots the function f(x). Plots by evaluating f at steps of p.
+	 * @param f function to plot
+	 * @param p step to sample function
+	 */
 	public void plot(Function f, double p){
 		
 		SwingWorker<Void,Void> sw = new SwingWorker<Void,Void>() {
@@ -264,10 +281,17 @@ public class CartesianGraph extends DataPanel {
 		sw.execute();
 	}
 	
+	/**
+	 * Plots the function f(x). Plots by evaluating f at steps of 5.0.
+	 * @param f Function to be plotted
+	 */
 	public void plot(Function f){
 		plot(f,5.0);
 	}
 	
+	/**
+	 * Recalculates all statistics and math.
+	 */
 	public void calculate(){
 		mean = MathUtilities.mean(pty);
 		std_dev = MathUtilities.std_dev(mean, pty);
@@ -341,7 +365,18 @@ public class CartesianGraph extends DataPanel {
 		}
 	}
 	
+	/**
+	 * Animates a point in the plane.
+	 * @param cur_x current x position
+	 * @param cur_y current y position
+	 * @param new_x new x position
+	 * @param new_y new y position
+	 * @param duration duration of the animation in milliseconds 
+	 * @param delay delay before animation starts in milliseconds
+	 */
 	public void animate(double cur_x, double cur_y, double new_x, double new_y, float duration, float delay){
+		if(cur_x == new_x && cur_y == new_y) return;
+		if(duration < 0 || delay < 0) throw new IllegalArgumentException("duration and delay must be [0,+"+Double.MAX_VALUE+")");
 		Thread t1 = new Thread(new Runnable(){
 
 			@Override
@@ -405,6 +440,14 @@ public class CartesianGraph extends DataPanel {
 		t2.start();
 	}
 	
+	/**
+	 * Animates a point given by its index.
+	 * @param index index of the point to be animated
+	 * @param new_x new x coordinate
+	 * @param new_y new y coordinate
+	 * @param duration duration of animation in milliseconds
+	 * @param delay delay before animation in milliseconds
+	 */
 	public void animate(int index, double new_x, double new_y, float duration, float delay){
 		animate(ptx.get(index), pty.get(index), new_x, new_y, duration, delay);
 	}
@@ -417,6 +460,12 @@ public class CartesianGraph extends DataPanel {
 		}
 	}
 	
+	/**
+	 * Converts GUI coordinates to plane cartesian coordinates
+	 * @param x GUI x coordinate
+	 * @param y GUI y coordinate
+	 * @return array of size 2 containing {x_coord,y_coord}
+	 */
 	public double[] mouseToCoordinate(double x, double y){
 		double[] pts = new double[2];
 		pts[0] = (x_scale*(x-origin_x))/ppp;
@@ -424,10 +473,22 @@ public class CartesianGraph extends DataPanel {
 		return pts;
 	}
 	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return true if the point is off the screen
+	 */
 	public boolean offScreen(double x, double y){
 		return x<-getMaxX() || x>getMaxX() || y<-getMaxY() || y>getMaxY();
 	}
 	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return true if the point is on the screen
+	 */
 	public boolean onScreen(double x, double y){
 		return !offScreen(x,y);
 	}
@@ -454,6 +515,14 @@ public class CartesianGraph extends DataPanel {
 	
 	public Color getPointColor(){
 		return pt_color;
+	}
+	
+	public void setLineColor(Color c){
+		line_color = c;
+	}
+	
+	public Color getLineColor(){
+		return line_color;
 	}
 	
 	public void setConnectPoints(Boolean b){
