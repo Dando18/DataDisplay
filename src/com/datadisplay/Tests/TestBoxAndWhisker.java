@@ -1,0 +1,26 @@
+package com.datadisplay.Tests;
+
+import java.util.ArrayList;
+
+import com.datadisplay.BoxAndWhiskerPlot;
+import com.datadisplay.DataDisplay;
+
+public class TestBoxAndWhisker {
+	
+public static void main(String[] args) {
+		
+		DataDisplay dd = new DataDisplay();
+		BoxAndWhiskerPlot bawp = dd.showBoxAndWhiskerPlot();
+		
+		ArrayList<Double> p1 = new ArrayList<Double>();
+		p1.add(1.0);
+		p1.add(3.0);
+		p1.add(5.0);
+		p1.add(7.0);
+		p1.add(11.0);
+		bawp.addPlot(p1);
+		
+		bawp.addValues(1.0, 3.0, 5.0, 34.0, 8.0, 12.0);
+	}
+	
+}
