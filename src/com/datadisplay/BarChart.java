@@ -16,7 +16,7 @@ public class BarChart extends DataPanel{
 	private int origin_y = this.getHeight()-cushion;
 	private int ppp = 20;
 	
-	private List<Integer> bar_values;
+	private List<Double> bar_values;
 	private List<String> titles;
 	private boolean showBarValues = false;
 	private boolean showBarTitles = false;
@@ -30,7 +30,7 @@ public class BarChart extends DataPanel{
 		
 		this.setBackground(Color.LIGHT_GRAY);
 		
-		bar_values = new ArrayList<Integer>();
+		bar_values = new ArrayList<Double>();
 		titles = new ArrayList<String>();
 		
 	}
@@ -48,20 +48,20 @@ public class BarChart extends DataPanel{
 		for(int i=0; i<bar_values.size(); i++){
 			g2d.setColor(bar_colors[color_inc++]);
 			if(color_inc==bar_colors.length) color_inc=0;
-			int bar_height = ppp*bar_values.get(i);
-			g2d.fillRect( origin_x+(i*bar_width), origin_y-bar_height, bar_width, ppp*bar_values.get(i));
+			double bar_height = ppp*bar_values.get(i);
+			g2d.fillRect( origin_x+(i*bar_width), (int)(origin_y-bar_height), bar_width, (int)(ppp*bar_values.get(i)));
 			g2d.setColor(Color.BLACK);
-			g2d.drawRect( origin_x+(i*bar_width), origin_y-bar_height, bar_width, ppp*bar_values.get(i));
+			g2d.drawRect( origin_x+(i*bar_width), (int)(origin_y-bar_height), bar_width, (int)(ppp*bar_values.get(i)));
 			
 			if(showBarValues){
 				g2d.setColor(Color.WHITE);
-				g2d.drawString(""+bar_values.get(i), origin_x+(i*bar_width)+bar_width/2-5, origin_y-ppp*bar_values.get(i)/2+5);
+				g2d.drawString(""+bar_values.get(i), origin_x+(i*bar_width)+bar_width/2-5, (int)(origin_y-ppp*bar_values.get(i)/2+5));
 			}
 			if(showBarTitles){
 				FontMetrics fm = g2d.getFontMetrics();
 				g2d.setColor(Color.WHITE);
 				g2d.drawString(titles.get(i), origin_x+(i*bar_width)+bar_width/2-fm.stringWidth(titles.get(i))/2, 
-						origin_y-ppp*bar_values.get(i)-fm.getHeight());
+						(int)(origin_y-ppp*bar_values.get(i)-fm.getHeight()));
 			}
 		}
 		color_inc=0; //comment out this line for resize color strobing
@@ -71,13 +71,19 @@ public class BarChart extends DataPanel{
 		g2d.drawString(title, this.getWidth()/2-fm.stringWidth(title)/2, cushion/4+fm.getHeight());
 	}
 	
-	public void addValue(int x, String title){
+	public void addValue(double x, String title){
 		bar_values.add(x);
 		titles.add(title);
 	}
 	
-	public void addValue(int x){
+	public void addValue(double x){
 		addValue(x,"");
+	}
+	
+	public void addValues(List<Double> l){
+		for(Double d : l){
+			addValue(d);
+		}
 	}
 	
 	private void drawAxes(Graphics2D g2d){
