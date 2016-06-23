@@ -25,6 +25,14 @@ public class ConsoleUtilities {
 		}
 		return nums;
 	}
+	
+	public static <T> String listToString(List<T> l){
+		String response = "[";
+		for (int i = 0; i < l.size() - 1; i++) {
+			response += l.get(i) + ", ";
+		}
+		return response + l.get(l.size() - 1) + "]";
+	}
 
 	// a+2|a=1 -> 1+2
 	public static String replaceVarWithValue(String input, Map<String, Double> vars) {
