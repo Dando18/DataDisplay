@@ -243,6 +243,7 @@ public class CartesianGraph extends DataPanel {
 	public void plot(double x, double y){
 		ptx.add(x);
 		pty.add(y);
+		repaint();
 	}
 	
 	/**
@@ -253,6 +254,7 @@ public class CartesianGraph extends DataPanel {
 	public void plot(List<Double> x, List<Double> y){
 		ptx.addAll(x);
 		pty.addAll(y);
+		repaint();
 	}
 	
 	/**
@@ -279,6 +281,7 @@ public class CartesianGraph extends DataPanel {
 		hidePoints();
 		setConnectPoints(true);
 		sw.execute();
+		repaint();
 	}
 	
 	/**
