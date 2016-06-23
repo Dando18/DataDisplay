@@ -58,21 +58,21 @@ public class ConsoleInput {
 			cg.write(response);
 			return;
 		}
-		
+
 		response = testURL(input);
 		response = testMath(input);
 
 		cg.write(response);
 	}
-	
-	private String testURL(String input){
+
+	private String testURL(String input) {
 		String tmp = input.replace(" ", "");
-		if(Pattern.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", tmp)){
-			if(Desktop.isDesktopSupported()){
-				try{
+		if (Pattern.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", tmp)) {
+			if (Desktop.isDesktopSupported()) {
+				try {
 					Desktop.getDesktop().browse(new URI(input));
-				}catch(IOException | URISyntaxException ex){
-					return "malformed url";
+				} catch (IOException | URISyntaxException ex) {
+					return ERROR + "malformed url";
 				}
 			}
 		}
@@ -83,34 +83,28 @@ public class ConsoleInput {
 		String response = input;
 
 		String tmp = input.replace(" ", "");
-		
+
 		if (vars.containsKey(tmp)) {
-			response = Double.toString(vars.get(tmp));
-			return response;	
+			return Double.toString(vars.get(tmp));
 		}
-		if(var_lists.containsKey(tmp)){
-			response = "[";
-			List<Double> list = var_lists.get(tmp);
-			for(int i=0; i<list.size()-1; i++){
-				response += list.get(i)+", ";
-			}
-			return response + list.get(list.size()-1) +"]";
+		if (var_lists.containsKey(tmp)) {
+			return ConsoleUtilities.listToString(var_lists.get(tmp));
 		}
-		
-		if(Pattern.matches("[a-z]+[a-z0-9]*\\[(\\-?\\d+(:\\d+)?|[a-z]+[a-z0-9]*)]", tmp)){
+
+		if (Pattern.matches("[a-z]+[a-z0-9]*\\[(\\-?\\d+(:\\d+)?|[a-z]+[a-z0-9]*)]", tmp)) {
 			String[] parts = tmp.split("\\[");
-			if(var_lists.containsKey(parts[0])){
+			if (var_lists.containsKey(parts[0])) {
 				parts[1] = parts[1].replace("]", "");
-				try{
+				try {
 					int index = Integer.parseInt(parts[1]);
-					return ""+var_lists.get(parts[0]).get(index);
-				}catch(NumberFormatException ex){
-					return "index must be an integer value";
-				}catch(IndexOutOfBoundsException ex){
-					return "index out of bounds";
+					return "" + var_lists.get(parts[0]).get(index);
+				} catch (NumberFormatException ex) {
+					return ERROR + "index must be an integer value";
+				} catch (IndexOutOfBoundsException ex) {
+					return ERROR + "index out of bounds";
 				}
-			}else{
-				return "unknown variable";
+			} else {
+				return ERROR + "unknown variable";
 			}
 		}
 
@@ -122,9 +116,14 @@ public class ConsoleInput {
 			if (tmp.contains("=="))
 				inc = 2;
 			String op = tmp.substring(var_keys[0].length(), var_keys[0].length() + inc);
-			double a, b;   // a op. b   a-left b-right
+			double a = 0, b = 0; // a op. b a-left b-right
+			List<Double> a_l = null, b_l = null; // a op. b a-left b-right
+			boolean left_l = false, right_l = false;
 			if (vars.containsKey(var_keys[0])) {
 				a = vars.get(var_keys[0]);
+			} else if (var_lists.containsKey(var_keys[0])) {
+				a_l = var_lists.get(var_keys[0]);
+				left_l = true;
 			} else {
 				try {
 					a = Double.parseDouble(var_keys[0]);
@@ -134,6 +133,9 @@ public class ConsoleInput {
 			}
 			if (vars.containsKey(var_keys[1])) {
 				b = vars.get(var_keys[1]);
+			} else if (var_lists.containsKey(var_keys[1])) {
+				b_l = var_lists.get(var_keys[1]);
+				right_l = true;
 			} else {
 				try {
 					b = Double.parseDouble(var_keys[1]);
@@ -143,15 +145,58 @@ public class ConsoleInput {
 			}
 			switch (op) {
 			case "+":
-				return "" + (a + b);
+				if (left_l && right_l) {
+
+				} else if (left_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.addToList(a_l, b));
+				} else if (right_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.addToList(b_l, a));
+				} else {
+					return "" + (a + b);
+				}
 			case "-":
-				return "" + (a - b);
+				if (left_l && right_l) {
+
+				} else if (left_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.addToList(a_l, -b));
+				} else if (right_l) {
+					// a-b = (-b)+a
+					return "" + ConsoleUtilities
+							.listToString(MathUtilities.addToList(MathUtilities.multToList(b_l, -1), a));
+				} else {
+					return "" + (a - b);
+				}
 			case "*":
-				return "" + (a * b);
+				if (left_l && right_l) {
+
+				} else if (left_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.multToList(a_l, b));
+				} else if (right_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.multToList(b_l, a));
+				} else {
+					return "" + (a * b);
+				}
 			case "/":
-				return "" + (a / b);
+				if (left_l && right_l) {
+
+				} else if (left_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.multToList(a_l, 1.0 / b));
+				} else if (right_l) {
+					// a/b =
+					return "" + ConsoleUtilities.listToString(MathUtilities.multToList(b_l, 1.0 / a));
+				} else {
+					return "" + (a / b);
+				}
 			case "==":
-				return "" + (a == b);
+				if (left_l && right_l) {
+					return ""+a_l.equals(b_l);
+				} else if (left_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.addToList(a_l, b));
+				} else if (right_l) {
+					return "" + ConsoleUtilities.listToString(MathUtilities.addToList(b_l, a));
+				} else {
+					return "" + (a == b);
+				}
 			}
 		}
 
@@ -204,6 +249,13 @@ public class ConsoleInput {
 				return "";
 			}
 		});
+		commands.put("skip", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				cg.write(" ");
+				return "";
+			}
+		});
 		commands.put("stack", new CommandInterface() {
 			@Override
 			public String execute(List<String> args) {
@@ -223,16 +275,16 @@ public class ConsoleInput {
 				return resp;
 			}
 		});
-		commands.put("sum", new CommandInterface(){
+		commands.put("sum", new CommandInterface() {
 			@Override
 			public String execute(List<String> args) {
-				
-				if(args.size()==1 && var_lists.containsKey(args.get(0)) ){
-					return ""+MathUtilities.sum(var_lists.get(args.get(0)));
-				}else if(Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))){
-					return ""+MathUtilities.sum(ConsoleUtilities.inputToList(args.get(0)));
+
+				if (args.size() == 1 && var_lists.containsKey(args.get(0))) {
+					return "" + MathUtilities.sum(var_lists.get(args.get(0)));
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					return "" + MathUtilities.sum(ConsoleUtilities.inputToList(args.get(0)));
 				}
-				
+
 				return "";
 			}
 		});
@@ -259,45 +311,45 @@ public class ConsoleInput {
 				return response;
 			}
 		});
-		commands.put("barchart", new CommandInterface(){
+		commands.put("barchart", new CommandInterface() {
 			@Override
 			public String execute(List<String> args) {
 				String response = "";
-				
+
 				DataDisplay dd = new DataDisplay();
 				dd.getFrame().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				BarChart bc = dd.showBarChart();
 				bc.showBarValues();
-				
-				for(String s : args){
-					if(var_lists.containsKey(s)){
+
+				for (String s : args) {
+					if (var_lists.containsKey(s)) {
 						int count = 0;
-						for(Double d : var_lists.get(s)){
-							bc.addValue(d, s+"_"+count++);
+						for (Double d : var_lists.get(s)) {
+							bc.addValue(d, s + "_" + count++);
 						}
 						bc.showBarTitles();
-					}else if(Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", s)){
+					} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", s)) {
 						List<Double> l = ConsoleUtilities.inputToList(s);
 						bc.addValues(l);
-					}else if(Pattern.matches("title=\"\\s*[A-Za-z0-9,;:\\s]+\\s*\"", s)){
+					} else if (Pattern.matches("title=\"\\s*[A-Za-z0-9,;:\\s]+\\s*\"", s)) {
 						bc.setTitle(s.split("\"")[1]);
-					}else if("-m".equals(s)){
+					} else if ("-m".equals(s)) {
 						dd.getFrame().setState(Frame.ICONIFIED);
-					}else if("-f".equals(s)){
+					} else if ("-f".equals(s)) {
 						dd.getFrame().setSize(Toolkit.getDefaultToolkit().getScreenSize());
 					}
 				}
-				
+
 				return response;
 			}
 		});
-		commands.put("windowsize", new CommandInterface(){
+		commands.put("windowsize", new CommandInterface() {
 			@Override
 			public String execute(List<String> args) {
-				return "w: "+cg.getWidth()+"   h: "+cg.getHeight();
+				return "w: " + cg.getWidth() + "   h: " + cg.getHeight();
 			}
 		});
-		commands.put("version", new CommandInterface(){
+		commands.put("version", new CommandInterface() {
 			@Override
 			public String execute(List<String> args) {
 				return String.format("%X", cg.getUID());
