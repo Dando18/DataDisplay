@@ -126,4 +126,22 @@ public class MathUtilities {
 		return a.size()/2;
 	}
 	
+	public static List<Double> addToList(List<Double> l, double x){
+		if(l == null) return null;
+		List<Double> list = new ArrayList<Double>(l);
+		for(int i=0; i<list.size(); i++){
+			list.set(i, list.get(i)+x);
+		}
+		return list;
+	}
+	
+	public static List<Double> multToList(List<Double> l, double x){
+		if(l == null) return null;
+		List<Double> list = new ArrayList<Double>(l);
+		for(int i=0; i<list.size(); i++){
+			list.set(i, list.get(i)*x);
+		}
+		return list;
+	}
+	
 }
