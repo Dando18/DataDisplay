@@ -7,4 +7,4 @@ Example of what you can create with DataDisplay:
 ![](https://github.com/Dando18/DataDisplay/blob/master/images/Multi_Panel_Example.png)
 
 ### Console application
-<img src="https://github.com/Dando18/DataDisplay/blob/master/images/console_example.png" alt="console image" width="150" height="150"/>
+<img src="https://github.com/Dando18/DataDisplay/blob/master/images/console_example.png" alt="console image" width="300" height="300"/>
