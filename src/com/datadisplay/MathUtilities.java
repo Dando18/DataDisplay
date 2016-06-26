@@ -92,7 +92,7 @@ public class MathUtilities {
 		return (double) Math.round(x*precm)/precm;
 	}
 	
-	public static double min(ArrayList<Double> a){
+	public static double min(List<Double> a){
 		double min = a.get(0);
 		for(int i=1; i<a.size(); i++){
 			if(a.get(i)<min){
@@ -102,7 +102,7 @@ public class MathUtilities {
 		return min;
 	}
 	
-	public static double max(ArrayList<Double> a){
+	public static double max(List<Double> a){
 		double max = a.get(0);
 		for(int i=1; i<a.size(); i++){
 			if(a.get(i)>max){
