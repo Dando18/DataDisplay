@@ -7,19 +7,21 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class BoxAndWhiskerPlot extends DataPanel {
 	private static final long serialVersionUID = 1L;
 
 	public int ppp = 20;
 	public int scale = 1;
-	public ArrayList<ArrayList<Double>> plots;
+	public ArrayList<List<Double>> plots;
 	public ArrayList<Box> data;
 
 	private final int PADDING = 20;
 	private final int origin_x = PADDING;
 	private int origin_y = getHeight() - PADDING;
 	
+	private String title;
 	private Color box_color = Color.BLACK;
 	private Color axes_color = Color.BLACK;
 	private Color tick_color = Color.BLACK;
@@ -41,11 +43,11 @@ public class BoxAndWhiskerPlot extends DataPanel {
 	}
 
 	public BoxAndWhiskerPlot() {
-		plots = new ArrayList<ArrayList<Double>>();
+		plots = new ArrayList<List<Double>>();
 		data = new ArrayList<Box>();
 	}
 
-	public void addPlot(ArrayList<Double> values) {
+	public void addPlot(List<Double> values) {
 		Collections.sort(values);
 		plots.add(values);
 		calculate();
@@ -62,7 +64,7 @@ public class BoxAndWhiskerPlot extends DataPanel {
 		calculate();
 	}
 
-	public void addValueAtIndex(int index, ArrayList<Double> value) {
+	public void addValueAtIndex(int index, List<Double> value) {
 		if (index < 0)
 			throw new IllegalArgumentException("Index must be greater than zero");
 		if (index >= plots.size())
@@ -134,7 +136,7 @@ public class BoxAndWhiskerPlot extends DataPanel {
 		g2d.drawString(""+scale, origin_x+ppp-fm.stringWidth(""+scale)/2, origin_y+fm.getHeight());
 	}
 
-	private void plot(Graphics2D g2d, ArrayList<Double> plot, Box b, int index) {
+	private void plot(Graphics2D g2d, List<Double> plot, Box b, int index) {
 		g2d.setColor(Color.black);
 		int height = getBarHeight();
 		int center_y = origin_y - (height / 2 + PADDING) * (index + 1) - index * height / 2;
@@ -206,6 +208,14 @@ public class BoxAndWhiskerPlot extends DataPanel {
 	 */
 	public void setTick_color(Color tick_color) {
 		this.tick_color = tick_color;
+	}
+	
+	public void setTitle(String title){
+		this.title = title;;
+	}
+	
+	public String getTitle(){
+		return title;
 	}
 
 	/**
