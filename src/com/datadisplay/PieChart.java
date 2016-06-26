@@ -78,6 +78,11 @@ public class PieChart extends DataPanel{
 		addValue("",percentage);
 	}
 	
+	public void addValues(List<Double> l){
+		for(Double d : l)
+			addValue(d);
+	}
+	
 	public void setPrecision(int precision){
 		this.precision = precision;
 	}
