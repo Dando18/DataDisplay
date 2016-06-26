@@ -2,7 +2,10 @@ package com.datadisplay;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.Random;
+
+import javax.swing.JPanel;
 
 public class GUIUtilities {
 	
@@ -17,6 +20,15 @@ public class GUIUtilities {
 	public static void drawString(Graphics2D g, String text, int x, int y) {
 	    for (String line : text.split("\n"))
 	        g.drawString(line, x, y += g.getFontMetrics().getHeight());
+	}
+	
+	public static BufferedImage createImage(JPanel panel) {
+	    int w = panel.getWidth();
+	    int h = panel.getHeight();
+	    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+	    Graphics2D g = bi.createGraphics();
+	    panel.paint(g);
+	    return bi;
 	}
 	
 }
