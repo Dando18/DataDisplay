@@ -16,9 +16,11 @@ import java.util.regex.Pattern;
 import javax.swing.JFrame;
 
 import com.datadisplay.BarChart;
+import com.datadisplay.BoxAndWhiskerPlot;
 import com.datadisplay.CartesianGraph;
 import com.datadisplay.DataDisplay;
 import com.datadisplay.MathUtilities;
+import com.datadisplay.PieChart;
 
 public class ConsoleInput {
 
@@ -189,7 +191,7 @@ public class ConsoleInput {
 				}
 			case "==":
 				if (left_l && right_l) {
-					return ""+a_l.equals(b_l);
+					return "" + a_l.equals(b_l);
 				} else if (left_l) {
 					return "" + ConsoleUtilities.listToString(MathUtilities.addToList(a_l, b));
 				} else if (right_l) {
@@ -227,6 +229,17 @@ public class ConsoleInput {
 					var_lists.put(left, ConsoleUtilities.inputToList(eq[1]));
 				}
 
+			}
+		}
+		if (Pattern.matches("\\s*[a-z]+[]a-z0-9]*\\s*=\\s*[\\+\\-\\*/\\(\\)\\d\\.a-zA-Z]+\\s*", tmp)) {
+			try {
+				String[] sides = input.split("\\s*=\\s*");
+				String right = ConsoleUtilities.replaceVarWithValue(sides[1], vars);
+				System.out.println(right);
+				vars.put(sides[0], ConsoleUtilities.eval(right));
+				response = "** " + vars.get(sides[0]);
+			} catch (IllegalArgumentException ex) {
+				ex.printStackTrace();
 			}
 		}
 
@@ -337,6 +350,85 @@ public class ConsoleInput {
 						dd.getFrame().setState(Frame.ICONIFIED);
 					} else if ("-f".equals(s)) {
 						dd.getFrame().setSize(Toolkit.getDefaultToolkit().getScreenSize());
+					} else if (Pattern.matches("bg=\".+\"", s)) {
+						bc.setBackground(ConsoleUtilities.stringToColor(s.split("\"")[1]));
+					} else if (Pattern.matches("dump=\".+\"", s)) {
+						if (!ConsoleUtilities.dump(s.split("\"")[1], bc)) {
+							response += "\n could not dump to file";
+						}
+					}
+				}
+
+				return response;
+			}
+		});
+		commands.put("piechart", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				String response = "";
+
+				DataDisplay dd = new DataDisplay();
+				dd.getFrame().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				PieChart pc = dd.showPieChart();
+
+				for (String s : args) {
+					if (var_lists.containsKey(s)) {
+						int count = 0;
+						List<Double> l = var_lists.get(s);
+						if (MathUtilities.sum(l) > 1.0) {
+							return "sum of list must be > 0.0 and <= 1.0";
+						}
+						for (Double d : l) {
+							pc.addValue(s + "_" + count++, d);
+						}
+					} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", s)) {
+						List<Double> l = ConsoleUtilities.inputToList(s);
+						pc.addValues(l);
+					} else if (Pattern.matches("title=\"\\s*[A-Za-z0-9,;:\\s]+\\s*\"", s)) {
+						pc.setTitle(s.split("\"")[1]);
+					} else if ("-m".equals(s)) {
+						dd.getFrame().setState(Frame.ICONIFIED);
+					} else if ("-f".equals(s)) {
+						dd.getFrame().setSize(Toolkit.getDefaultToolkit().getScreenSize());
+					} else if (Pattern.matches("bg=\".+\"", s)) {
+						pc.setBackground(ConsoleUtilities.stringToColor(s.split("\"")[1]));
+					} else if (Pattern.matches("dump=\".+\"", s)) {
+						if (!ConsoleUtilities.dump(s.split("\"")[1], pc)) {
+							response += "\n could not dump to file";
+						}
+					}
+				}
+
+				return response;
+			}
+		});
+		commands.put("boxplot", new CommandInterface(){
+			@Override
+			public String execute(List<String> args) {
+				String response = "";
+
+				DataDisplay dd = new DataDisplay();
+				dd.getFrame().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				BoxAndWhiskerPlot bawp = dd.showBoxAndWhiskerPlot();
+
+				for (String s : args) {
+					if (var_lists.containsKey(s)) {
+						bawp.addPlot(var_lists.get(s));
+					} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", s)) {
+						List<Double> l = ConsoleUtilities.inputToList(s);
+						bawp.addPlot(l);
+					} else if (Pattern.matches("title=\"\\s*[A-Za-z0-9,;:\\s]+\\s*\"", s)) {
+						bawp.setTitle(s.split("\"")[1]);
+					} else if ("-m".equals(s)) {
+						dd.getFrame().setState(Frame.ICONIFIED);
+					} else if ("-f".equals(s)) {
+						dd.getFrame().setSize(Toolkit.getDefaultToolkit().getScreenSize());
+					} else if (Pattern.matches("bg=\".+\"", s)) {
+						bawp.setBackground(ConsoleUtilities.stringToColor(s.split("\"")[1]));
+					} else if (Pattern.matches("dump=\".+\"", s)) {
+						if (!ConsoleUtilities.dump(s.split("\"")[1], bawp)) {
+							response += "\n could not dump to file";
+						}
 					}
 				}
 
