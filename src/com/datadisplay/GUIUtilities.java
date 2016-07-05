@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 public class GUIUtilities {
@@ -30,5 +31,15 @@ public class GUIUtilities {
 	    panel.paint(g);
 	    return bi;
 	}
+	
+	public static BufferedImage createImage(JComponent comp) {
+	    int w = comp.getWidth();
+	    int h = comp.getHeight();
+	    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+	    Graphics2D g = bi.createGraphics();
+	    comp.paint(g);
+	    return bi;
+	}
+	
 	
 }
