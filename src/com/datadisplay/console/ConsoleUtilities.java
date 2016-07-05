@@ -134,7 +134,7 @@ public class ConsoleUtilities {
 	public static boolean dump(String file_name, JPanel p){
 		try{
 			if(file_name.endsWith("/") || "".equals(file_name)){
-				file_name += String.format("piechart_%X", (long)(Math.random()*1000));
+				file_name += String.format("console_%X", (long)(Math.random()*1000));
 			}
 			if(!file_name.endsWith(".png")){
 				file_name += ".png";
