@@ -24,24 +24,53 @@ public class ConsoleUtilities {
 	// expected [num0, num1, num2, num3] NOTE: spaces don't matter
 	public static List<Double> inputToList(String input) {
 		String tmp = input.replaceAll("(\\[|\\])", "");
-		String[] vals = tmp.split(",\\s*");
 		List<Double> nums = new ArrayList<Double>();
-		for (String s : vals) {
-			try {
-				nums.add(Double.parseDouble(s));
-			} catch (NumberFormatException ex) {
-				nums.add(0.0);
+		if (tmp.contains(",")) {
+			String[] vals = tmp.split(",\\s*");
+			for (String s : vals) {
+				try {
+					nums.add(Double.parseDouble(s));
+				} catch (NumberFormatException ex) {
+					nums.add(0.0);
+				}
+			}
+		} else if (tmp.contains(":")) {
+			String[] vals = tmp.split(":\\s*");
+			double beg = 0;
+			double end = 0;
+			double step = 1;
+			if (vals.length == 2) {
+				try {
+					beg = Double.parseDouble(vals[0]);
+					end = Double.parseDouble(vals[1]);
+				} catch (NumberFormatException ex) {
+					nums.add(0.0);
+				}
+			} else if (vals.length == 3) {
+				try {
+					beg = Double.parseDouble(vals[0]);
+					end = Double.parseDouble(vals[1]);
+					step = Double.parseDouble(vals[2]);
+				} catch (NumberFormatException ex) {
+					nums.add(0.0);
+				}
+			}
+			if (step != 0 && ((beg < end && step > 0) || (beg > end && step < 0))) {
+				for (double d = beg; d <= end; d += step) {
+					nums.add(d);
+				}
 			}
 		}
 		return nums;
 	}
-	
-	public static Double eval(String in){
-		if(in == null || in.trim().equals("")) return null;
+
+	public static Double eval(String in) {
+		if (in == null || in.trim().equals(""))
+			return null;
 		return new DoubleEvaluator().evaluate(in);
 	}
-	
-	public static <T> String listToString(List<T> l){
+
+	public static <T> String listToString(List<T> l) {
 		String response = "[";
 		for (int i = 0; i < l.size() - 1; i++) {
 			response += l.get(i) + ", ";
@@ -53,24 +82,24 @@ public class ConsoleUtilities {
 	public static String replaceVarWithValue(String input, Map<String, Double> vars) {
 		String result = "";
 
-		String[] terms = input.split(String.format("((?<=%1$s)|(?=%1$s))", "\\s*\\)?[\\+\\-\\*/]\\(?\\s*"));
-		
-		for(int i=0; i<terms.length; i++){
-			if(vars.containsKey(terms[i])){
-				result += ""+vars.get(terms[i]);
-			}else{
+		String[] terms = input.split(String.format("((?<=%1$s)|(?=%1$s))", "\\s*\\)?[\\+\\-\\*/,\\[\\]]\\(?\\s*"));
+
+		for (int i = 0; i < terms.length; i++) {
+			if (vars.containsKey(terms[i])) {
+				result += "" + vars.get(terms[i]);
+			} else {
 				result += terms[i];
 			}
 		}
 
 		return result;
 	}
-	
+
 	// expecting format <command> -<key> ... <key>="<value>" ...
 	public static List<String> getArgs(String input) {
 		List<String> sep = new ArrayList<String>();
 		Matcher m = Pattern.compile("(?:[^\\s\"]+|\"[^\"]*\")+").matcher(input);
-		while(m.find()){
+		while (m.find()) {
 			sep.add(m.group());
 		}
 		List<String> args = new ArrayList<String>();
@@ -81,19 +110,16 @@ public class ConsoleUtilities {
 		}
 		return args;
 	}
-	
-	public static Color stringToColor(String in){
-		if(in.startsWith("#")){
-			return new Color( Integer.valueOf( in.substring(1,3), 16),
-							  Integer.valueOf( in.substring(3,5), 16),
-							  Integer.valueOf( in.substring(5,7), 16));
-		}else if(Pattern.matches("\\d{1,3},\\d{1,3},\\d{1,3}", in)){
+
+	public static Color stringToColor(String in) {
+		if (in.startsWith("#")) {
+			return new Color(Integer.valueOf(in.substring(1, 3), 16), Integer.valueOf(in.substring(3, 5), 16),
+					Integer.valueOf(in.substring(5, 7), 16));
+		} else if (Pattern.matches("\\d{1,3},\\d{1,3},\\d{1,3}", in)) {
 			String[] nums = in.split(",");
-			return new Color( Integer.parseInt(nums[0]),
-							  Integer.parseInt(nums[1]),
-							  Integer.parseInt(nums[2]));
-		}else{
-			switch(in.toLowerCase()){
+			return new Color(Integer.parseInt(nums[0]), Integer.parseInt(nums[1]), Integer.parseInt(nums[2]));
+		} else {
+			switch (in.toLowerCase()) {
 			case "black":
 				return Color.BLACK;
 			case "white":
@@ -128,15 +154,24 @@ public class ConsoleUtilities {
 				return Color.WHITE;
 			}
 		}
-		
+
 	}
 	
-	public static boolean dump(String file_name, JPanel p){
-		try{
-			if(file_name.endsWith("/") || "".equals(file_name)){
-				file_name += String.format("console_%X", (long)(Math.random()*1000));
+	public static boolean orEquals(String test, String... in){
+		if(test==null) return false;
+		for(String s : in){
+			if(test.equals(s))
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean dump(String file_name, JPanel p) {
+		try {
+			if (file_name.endsWith("/") || "".equals(file_name)) {
+				file_name += String.format("console_%X", (long) (Math.random() * 1000));
 			}
-			if(!file_name.endsWith(".png")){
+			if (!file_name.endsWith(".png")) {
 				file_name += ".png";
 			}
 			File f = new File(file_name);
@@ -144,7 +179,7 @@ public class ConsoleUtilities {
 			f.createNewFile();
 			BufferedImage bi = GUIUtilities.createImage(p);
 			ImageIO.write(bi, "png", f);
-		} catch(IOException e){
+		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
