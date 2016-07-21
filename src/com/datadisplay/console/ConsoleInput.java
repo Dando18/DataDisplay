@@ -27,6 +27,9 @@ public class ConsoleInput {
 	public Map<String, CommandInterface> commands; // "<command_name, function>"
 	public Map<String, Double> vars; // "<var_name, value>"
 	public Map<String, List<Double>> var_lists; // "<var_name, values>"
+	
+	public Thread cur = null;
+	public boolean run = false;
 
 	public ConsoleInput(ConsoleGUI cg) {
 		this.cg = cg;
@@ -47,7 +50,7 @@ public class ConsoleInput {
 		String response = input;
 		prev.add(input);
 
-		String command = input.split(" ")[0];
+		String command = input.split("\\s+")[0];
 		if (commands.containsKey(command)) {
 			response = commands.get(command).execute(ConsoleUtilities.getArgs(input));
 			cg.write(response);
@@ -196,7 +199,7 @@ public class ConsoleInput {
 		}
 
 		Pattern var = Pattern.compile(
-				"[a-z]+[a-z0-9]*[\\+\\-/\\*=](\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]|[a-z0-9]+|\\d*(\\.?\\d+)?)");
+				"[a-z]+[a-z0-9]*[\\+\\-/\\*=](\\[((\\d*(\\.?\\d+)?|[a-z]+[a-zA-Z\\d]*)(,\\s*(\\d*(\\.?\\d+)?|[a-z]+[a-zA-Z\\d]*))*|\\d*(\\.?\\d+)?(:\\s*\\d*(\\.?\\d+)?){1,2})\\]|[a-z0-9]+|\\d*(\\.?\\d+)?)");
 		Matcher m = var.matcher(tmp);
 		if (m.matches()) {
 			response = input;
@@ -204,6 +207,7 @@ public class ConsoleInput {
 			if (tmp.contains("=")) {
 				String[] eq = tmp.split("[\\+\\-/\\*=]=?");
 				String left = eq[0];
+				eq[1] = ConsoleUtilities.replaceVarWithValue(eq[1], vars);
 				if (Pattern.matches("\\d*(\\.?\\d+)?", eq[1])) {
 					try {
 						vars.put(left, Double.parseDouble(eq[1]));
@@ -218,7 +222,7 @@ public class ConsoleInput {
 					} catch (NullPointerException ex) {
 						response = "could not evaluate variable " + eq[1];
 					}
-				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", eq[1])) {
+				} else if (Pattern.matches("\\[((\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*|\\d*(\\.?\\d+)?(:\\s*\\d*(\\.?\\d+)?){1,2})\\]", eq[1])) {
 					var_lists.put(left, ConsoleUtilities.inputToList(eq[1]));
 				}
 
