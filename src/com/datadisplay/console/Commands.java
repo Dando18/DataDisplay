@@ -12,7 +12,9 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -120,6 +122,142 @@ public class Commands {
 					return "" + MathUtilities.mean(ci.var_lists.get(args.get(0)));
 				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
 					return "" + MathUtilities.mean(ConsoleUtilities.inputToList(args.get(0)));
+				}
+				return "";
+			}
+		});
+		commands.put("stddev", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 1 && ci.var_lists.containsKey(args.get(0))) {
+					return "" + MathUtilities.std_dev(ci.var_lists.get(args.get(0)));
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					return "" + MathUtilities.std_dev(ConsoleUtilities.inputToList(args.get(0)));
+				}
+				return "";
+			}
+		});
+		commands.put("len", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 1 && ci.var_lists.containsKey(args.get(0))) {
+					return "" + ci.var_lists.get(args.get(0)).size();
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					return "" + ConsoleUtilities.inputToList(args.get(0)).size();
+				}
+				return "";
+			}
+		});
+		commands.put("first", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 1 && ci.var_lists.containsKey(args.get(0))) {
+					return "" + ci.var_lists.get(args.get(0)).get(0);
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					return "" + ConsoleUtilities.inputToList(args.get(0)).get(0);
+				}
+				return "";
+			}
+		});
+		commands.put("last", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 1 && ci.var_lists.containsKey(args.get(0))) {
+					List<Double> l = ci.var_lists.get(args.get(0));
+					return "" + l.get(l.size() - 1);
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					List<Double> l = ConsoleUtilities.inputToList(args.get(0));
+					return "" + l.get(l.size() - 1);
+				}
+				return "";
+			}
+		});
+		commands.put("min", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 1 && ci.var_lists.containsKey(args.get(0))) {
+					return "" + MathUtilities.min(ci.var_lists.get(args.get(0)));
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					return "" + MathUtilities.min(ConsoleUtilities.inputToList(args.get(0)));
+				}
+				return "";
+			}
+		});
+		commands.put("max", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 1 && ci.var_lists.containsKey(args.get(0))) {
+					return "" + MathUtilities.max(ci.var_lists.get(args.get(0)));
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					return "" + MathUtilities.max(ConsoleUtilities.inputToList(args.get(0)));
+				}
+				return "";
+			}
+		});
+		commands.put("sqrt", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 0)
+					return "";
+				if (ci.vars.containsKey(args.get(0))) {
+					return "" + Math.sqrt(ci.vars.get(args.get(0)));
+				} else if (Pattern.matches("\\d*(\\.?\\d+)?", args.get(0))) {
+					double num;
+					try {
+						num = Double.parseDouble(args.get(0));
+					} catch (NumberFormatException ex) {
+						return ConsoleInput.ERROR + "unable to parse input";
+					}
+					return "" + Math.sqrt(num);
+				} else if (ci.var_lists.containsKey(args.get(0))) {
+					List<Double> l = new ArrayList<Double>();
+					for (Double d : ci.var_lists.get(args.get(0))) {
+						l.add(Math.sqrt(d));
+					}
+					return "" + ConsoleUtilities.listToString(l);
+				} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", args.get(0))) {
+					List<Double> l = new ArrayList<Double>();
+					for (Double d : ConsoleUtilities.inputToList(args.get(0))) {
+						l.add(Math.sqrt(d));
+					}
+					return "" + ConsoleUtilities.listToString(l);
+				}
+				return "";
+			}
+		});
+		commands.put("isprime", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				if (args.size() == 0)
+					return "";
+				if (ci.vars.containsKey(args.get(0))) {
+					double val = ci.vars.get(args.get(0));
+					if (val != Math.floor(val))
+						return "only integer values";
+					return "" + MathUtilities.isPrime(ci.vars.get(args.get(0)).intValue());
+				} else if (Pattern.matches("\\d*", args.get(0))) {
+					int num;
+					try {
+						num = Integer.parseInt(args.get(0));
+					} catch (NumberFormatException ex) {
+						return ConsoleInput.ERROR + "unable to parse input";
+					}
+					return "" + MathUtilities.isPrime(num);
+				} else if (ci.var_lists.containsKey(args.get(0))) {
+					List<Boolean> l = new ArrayList<Boolean>();
+					for (Double d : ci.var_lists.get(args.get(0))) {
+						double val = d.doubleValue();
+						if (val != Math.floor(val))
+							return "only integer values";
+						l.add(MathUtilities.isPrime(d.intValue()));
+					}
+					return "" + ConsoleUtilities.listToString(l);
+				} else if (Pattern.matches("\\[(\\d*)(,\\s*\\d*)*\\]", args.get(0))) {
+					List<Boolean> l = new ArrayList<Boolean>();
+					for (Double d : ConsoleUtilities.inputToList(args.get(0))) {
+						l.add(MathUtilities.isPrime(d.intValue()));
+					}
+					return "" + ConsoleUtilities.listToString(l);
 				}
 				return "";
 			}
@@ -335,7 +473,7 @@ public class Commands {
 						try {
 							port = Integer.parseInt(s.split("\"")[1]);
 						} catch (NumberFormatException e) {
-							return ConsoleInput.ERROR + "invalid port number";
+							return ConsoleInput.ERROR + "invalid port number (" + s.split("\"")[1] + ")";
 						}
 					} else if (Pattern.matches("data=\".+\"", s)) {
 						bytes = s.split("\"")[1].getBytes();
@@ -353,17 +491,18 @@ public class Commands {
 						}
 					} else if ("-h".equals(s)) {
 						return ConsoleInput.HELP + "(* mandatory) udp <options>\n" + "\t*ip=\"<ip_address>\"\n"
-								+ "\t*port=\"<port_number>\"\n"
+								+ "\t*port=\"<port_number>\"\n" + "\tdata=\"<data_to_send>\"\n"
 								+ "\trep=\"<number_of_times_to_send>\" (-1 for continuous)\n" + "\t-v verbose\n"
 								+ "\t-flood change port every packet sent";
 					}
 				}
 				if (!"".equals(ip) && port != -1) {
+					DatagramSocket ds = null;
 					try {
 						int port_tmp = port;
 						InetAddress ia = InetAddress.getByName(ip);
 						DatagramPacket dp = new DatagramPacket(bytes, bytes.length, ia, port);
-						DatagramSocket ds = new DatagramSocket();
+						ds = new DatagramSocket();
 						if (rep != -1) {
 							for (int i = 0; i < rep; i++) {
 								if (flood && i != 0) {
@@ -376,28 +515,52 @@ public class Commands {
 											+ " at port " + port_tmp);
 							}
 						} else {
-							int i = 0;
-							while (true) {
-								ds.send(dp);
-								if (verbose)
-									ci.cg.write(" - (" + (i++) + ") sending " + bytes.length + " bytes to " + ip
-											+ " at port " + port);
-								Thread.sleep(10l);
-							}
+							final DatagramPacket DP_TMP = dp;
+							final boolean VERBOSE_TMP = verbose;
+							final byte[] BYTES_TMP = bytes;
+							final String IP_TMP = ip;
+							final int PORT_TMP = port;
+							Thread t = new Thread(new Runnable() {
+								@Override
+								public void run() {
+									DatagramSocket ds_t = null;
+									try {
+										ds_t = new DatagramSocket();
+										int i = 0;
+										while (ci.run) {
+											ds_t.send(DP_TMP);
+											if (VERBOSE_TMP)
+												ci.cg.write(" - (" + (i++) + ") sending " + BYTES_TMP.length
+														+ " bytes to " + IP_TMP + " at port " + PORT_TMP);
+											Thread.sleep(3000l);
+										}
+									} catch (InterruptedException | IOException ex) {
+										ci.cg.write(ConsoleInput.ERROR + "could not send packet");
+										ex.printStackTrace();
+									} finally {
+										if(ds_t != null)
+											ds_t.close();
+									}
+								}
+							});
+							ci.cur = t;
+							ci.run = true;
+							t.start();
 						}
-						ds.close();
 					} catch (UnknownHostException e) {
 						return ConsoleInput.ERROR + "unknown ip/host";
 					} catch (IOException e) {
+						e.printStackTrace();
 						return ConsoleInput.ERROR + "could not send packet";
-					} catch (InterruptedException e) {
-						return ConsoleInput.ERROR + "could not continually send packets";
 					} catch (RuntimeException e) {
 						return ConsoleInput.ERROR + "something else went wrong";
+					} finally {
+						if (ds != null)
+							ds.close();
 					}
 				} else {
 					return ConsoleInput.HELP + "(* mandatory) udp <options>\n" + "\t*ip=\"<ip_address>\"\n"
-							+ "\t*port=\"<port_number>\"\n"
+							+ "\t*port=\"<port_number>\"\n" + "\tdata=\"<data_to_send>\"\n"
 							+ "\trep=\"<number_of_times_to_send>\" (-1 for continuous)\n" + "\t-v verbose\n"
 							+ "\t-flood change port every packet sent";
 				}
@@ -405,11 +568,130 @@ public class Commands {
 				return "";
 			}
 		});
+		commands.put("udpopen", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				int port = -1;
+				int size = 1024;
+				boolean verbose = false;
+
+				for (String s : args) {
+					if ("-v".equals(s)) {
+						verbose = true;
+					} else if (Pattern.matches("port=\".+\"", s)) {
+						try {
+							port = Integer.parseInt(s.split("\"")[1]);
+						} catch (NumberFormatException e) {
+							return ConsoleInput.ERROR + "invalid port number (" + s.split("\"")[1] + ")";
+						}
+					} else if (Pattern.matches("size=\".+\"", s)) {
+						try {
+							size = Integer.parseInt(s.split("\"")[1]);
+						} catch (NumberFormatException e) {
+							return ConsoleInput.ERROR + "invalid size number (" + s.split("\"")[1] + ")";
+						}
+					} else if ("-h".equals(s)) {
+						return ConsoleInput.HELP + "(* mandatory) udp <options>\n" + "\t*port=\"<port_number>\"\n"
+								+ "\tsize=\"<size_of_incoming_packet>\"\n" + "\t-v verbose\n";
+					}
+				}
+				if (port != -1) {
+					final int PORT_TMP = port;
+					final int SIZE_TMP = size;
+					final boolean VERBOSE_TMP = verbose;
+					try {
+						port = 5;
+						Thread t = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								DatagramSocket ds = null;
+								try {
+									ds = new DatagramSocket(PORT_TMP);
+									byte[] data = new byte[SIZE_TMP];
+									ci.cg.write(String.format("Listening on udp:%s:%d%n",
+											InetAddress.getLocalHost().getHostAddress(), PORT_TMP));
+									DatagramPacket dp = new DatagramPacket(data, data.length);
+
+									while (ci.run) {
+										ds.receive(dp);
+										String sentence = new String(dp.getData(), 0, dp.getLength());
+										if (VERBOSE_TMP)
+											ci.cg.write("RECEIVED: " + sentence);
+									}
+								} catch (IOException e) {
+									ci.cg.write(ConsoleInput.ERROR + "could not open socket");
+								} finally {
+									if (ds != null)
+										ds.close();
+								}
+							}
+						});
+						ci.cur = t;
+						ci.run = true;
+						t.start();
+					} catch (RuntimeException e) {
+						return ConsoleInput.ERROR + "something else went wrong";
+					}
+				} else {
+					return ConsoleInput.HELP + "(* mandatory) udp <options>\n" + "\t*port=\"<port_number>\"\n"
+							+ "\tsize=\"<size_of_incoming_packet>\"\n" + "\t-v verbose\n";
+				}
+
+				return "";
+			}
+		});
+		commands.put("ip", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				try {
+					if (args.size() > 0 && ConsoleUtilities.orEquals(args.get(0), "-n", "-name", "-hostname")) {
+						return InetAddress.getLocalHost().getHostName();
+					} else {
+						return InetAddress.getLocalHost().getHostAddress();
+					}
+				} catch (UnknownHostException e) {
+					return ConsoleInput.ERROR + "could not retrieve local ip";
+				}
+			}
+		});
+		commands.put("stop", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				String name = ci.cur.getName();
+				ci.run = false;
+				ci.cur = null;
+				return name + " successfully stopped";
+			}
+		});
+		commands.put("time", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				return new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+			}
+		});
+		commands.put("_", new CommandInterface() {
+			@Override
+			public String execute(List<String> args) {
+				for (String s : args) {
+					if ("-m".equals(s)) {
+						ci.cg.master = true;
+						return "master_mode: on";
+					} else if ("-n".equals(s)) {
+						ci.cg.master = false;
+						return "master_mode: off";
+					} else if ("-t".equals(s)) {
+						ci.cg.master = !ci.cg.master;
+						return "master_mode: " + ((ci.cg.master) ? "on" : "off");
+					}
+				}
+				return "master_mode: " + ((ci.cg.master) ? "on" : "off");
+			}
+		});
 		commands.put("help", new CommandInterface() {
 			@Override
 			public String execute(List<String> args) {
 				String resp = "";
-				int max_len = 5;
+				int max_len = 6;
 				List<String> keys = new ArrayList<String>(commands.keySet());
 				Collections.sort(keys);
 				int num_cols = keys.size() / max_len;
