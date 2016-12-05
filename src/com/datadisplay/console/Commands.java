@@ -675,16 +675,16 @@ public class Commands {
 				for (String s : args) {
 					if ("-m".equals(s)) {
 						ci.cg.master = true;
-						return "master_mode: on";
-					} else if ("-n".equals(s)) {
+						return "mode: master";
+					} else if ("-r".equals(s)) {
 						ci.cg.master = false;
-						return "master_mode: off";
+						return "mode: regular";
 					} else if ("-t".equals(s)) {
 						ci.cg.master = !ci.cg.master;
-						return "master_mode: " + ((ci.cg.master) ? "on" : "off");
+						return "mode: " + ((ci.cg.master) ? "master" : "regular");
 					}
 				}
-				return "master_mode: " + ((ci.cg.master) ? "on" : "off");
+				return "mode: " + ((ci.cg.master) ? "master" : "regular");
 			}
 		});
 		commands.put("help", new CommandInterface() {
