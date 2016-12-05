@@ -164,5 +164,17 @@ public class MathUtilities {
 		}
 		return list;
 	}
+	
+	public static double clamp(double min, double max, double val){
+		return val<min?min:val>max?max:val;
+	}
+	
+	public static List<Double> range(double min, double max, double step){
+		List<Double> l = new ArrayList<Double>();
+		for(double i=min; i<=max; i+=step){
+			l.add(i);
+		}
+		return l;
+	}
 
 }
