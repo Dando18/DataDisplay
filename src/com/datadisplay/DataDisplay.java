@@ -111,6 +111,18 @@ public class DataDisplay {
 		return bawp;
 	}
 	
+	public ContourPlot showContourPlot() {
+		ContourPlot cp = new ContourPlot();
+		frame.getContentPane().add(cp);
+		
+		if(BOXES>1){
+			cp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+		
+		frame.pack();
+		return cp;
+	}
+	
 	public JFrame getFrame(){
 		return frame;
 	}
