@@ -41,5 +41,9 @@ public class GUIUtilities {
 	    return bi;
 	}
 	
+	public static float getHue(Color c){
+		return Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null)[0];
+	}
+	
 	
 }
