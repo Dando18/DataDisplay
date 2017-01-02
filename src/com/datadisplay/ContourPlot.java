@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import com.datadisplay.function.MultivariateFunction;
+import com.datadisplay.function.MultivariateFunctionInterface;
 
 public class ContourPlot extends DataPanel {
 	private static final long serialVersionUID = 1L;
@@ -58,12 +59,16 @@ public class ContourPlot extends DataPanel {
 			drawKey(g2d);
 	}
 
-	public void setFunction(MultivariateFunction mf) {
+	public void plot(MultivariateFunction mf) {
 		if (mf.variables != 2) {
 			throw new IllegalArgumentException("MultivariateFunction must have two variables for CountourPlot");
 		}
 		this.mf = mf;
 		setZBounds();
+	}
+	
+	public void plot(MultivariateFunctionInterface mf) {
+		plot(new MultivariateFunction(2, mf));
 	}
 
 	private void setZBounds() {
