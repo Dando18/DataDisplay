@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BoxAndWhiskerPlot extends DataPanel {
+public class BoxPlot extends DataPanel {
 	private static final long serialVersionUID = 1L;
 
 	public int ppp = 20;
@@ -42,7 +42,7 @@ public class BoxAndWhiskerPlot extends DataPanel {
 		}
 	}
 
-	public BoxAndWhiskerPlot() {
+	public BoxPlot() {
 		plots = new ArrayList<List<Double>>();
 		data = new ArrayList<Box>();
 	}

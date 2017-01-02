@@ -2,7 +2,7 @@ package com.datadisplay.Tests;
 
 import java.util.ArrayList;
 
-import com.datadisplay.BoxAndWhiskerPlot;
+import com.datadisplay.BoxPlot;
 import com.datadisplay.DataDisplay;
 
 public class TestBoxAndWhisker {
@@ -10,7 +10,7 @@ public class TestBoxAndWhisker {
 public static void main(String[] args) {
 		
 		DataDisplay dd = new DataDisplay();
-		BoxAndWhiskerPlot bawp = dd.showBoxAndWhiskerPlot();
+		BoxPlot bawp = dd.showBoxPlot();
 		
 		ArrayList<Double> p1 = new ArrayList<Double>();
 		p1.add(1.0);

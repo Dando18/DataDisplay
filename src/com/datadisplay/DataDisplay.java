@@ -99,8 +99,8 @@ public class DataDisplay {
 		return iv;
 	}
 	
-	public BoxAndWhiskerPlot showBoxAndWhiskerPlot(){
-		BoxAndWhiskerPlot bawp = new BoxAndWhiskerPlot();
+	public BoxPlot showBoxPlot(){
+		BoxPlot bawp = new BoxPlot();
 		frame.getContentPane().add(bawp);
 		
 		if(BOXES>1){
