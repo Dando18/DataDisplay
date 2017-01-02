@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+
+import com.datadisplay.function.Function;
+import com.datadisplay.function.FunctionInterface;
 
 public class PolarGraph extends JPanel{
 	public static final long serialVersionUID = 1L;
@@ -22,6 +26,7 @@ public class PolarGraph extends JPanel{
 	
 	private Color pt_color = Color.RED;
 	private boolean connectPoints = false;
+	private boolean showPoints = false;
 	public boolean epilepsy = false;
 	
 	/**
@@ -48,8 +53,10 @@ public class PolarGraph extends JPanel{
 		drawCircles(g2d);
 		
 		for(int i=0; i< ptr.size(); i++){
-			drawPoint(g2d, ptr.get(i), ptt.get(i));
+			if(showPoints)
+				drawPoint(g2d, ptr.get(i), ptt.get(i));
 			if(connectPoints && i!=ptr.size()-1){
+				g2d.setColor(pt_color);
 				g.drawLine((int)(origin_x+Math.cos(ptt.get(i))*ptr.get(i)*ppp/scale), 
 						(int)(origin_y-Math.sin(ptt.get(i))*ptr.get(i)*ppp/scale), 
 						(int)(origin_x+Math.cos(ptt.get(i+1))*ptr.get(i+1)*ppp/scale), 
@@ -99,6 +106,37 @@ public class PolarGraph extends JPanel{
 		ptt.add(theta);
 	}
 	
+	public void plot(Function f, double p) {
+		SwingWorker<Void,Void> sw = new SwingWorker<Void,Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				double step = scale/p;
+				double max = Math.PI;
+				for(double i=0; i<max; i+=step){
+					plot(f.evaluate(i), i);
+				}
+				return null;
+			}
+			
+		};
+		setConnectPoints(true);
+		sw.execute();
+		repaint();
+	}
+	
+	public void plot(Function f) {
+		plot(f, 5.0);
+	}
+	
+	public void plot(FunctionInterface f, double p){
+		plot(new Function(f), p);
+	}
+	
+	public void plot(FunctionInterface f){
+		plot(f, 5.0);
+	}
+	
 	/**
 	 * 
 	 * @return maximum radius in panel size
@@ -129,6 +167,20 @@ public class PolarGraph extends JPanel{
 	 */
 	public Color getPointColor(){
 		return pt_color;
+	}
+	
+	/**
+	 * @param b if true, points drawn
+	 */
+	public void setShowPoints(Boolean b){
+		showPoints = b;
+	}
+	
+	/**
+	 * @return true if points will be drawn
+	 */
+	public Boolean getShowPoints(){
+		return showPoints;
 	}
 	
 	/**
