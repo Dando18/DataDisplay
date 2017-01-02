@@ -18,6 +18,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
 
 import com.datadisplay.function.Function;
+import com.datadisplay.function.FunctionInterface;
 
 public class CartesianGraph extends DataPanel {
 	private static final long serialVersionUID = 1L;
@@ -44,7 +45,7 @@ public class CartesianGraph extends DataPanel {
 	private boolean showStandardDeviation = false;
 	private boolean showLeastSquaresLine = false;
 	private boolean showLabels = false;
-	private boolean showGrid = false;
+	private boolean showGrid = true;
 	
 	private boolean drag_pt = false;
 	private boolean pressed = false;
@@ -68,82 +69,33 @@ public class CartesianGraph extends DataPanel {
 		ptx = new ArrayList<Double>();
 		pty = new ArrayList<Double>();
 		
-		this.addMouseListener(new MouseAdapter(){
-			@Override
-			public void mousePressed(MouseEvent e){
-				double[] pts = mouseToCoordinate(e.getX(),e.getY());
-				if(!pressed){
-					pressed = true;
-					repaint();
-				}
-				for(int i=0; i<ptx.size(); i++){
-					if((Math.abs(pts[0]-ptx.get(i))<=0.2) && (Math.abs(pts[1]-pty.get(i))<=0.2) && canEdit){
-						drag_pt = true;
-						drag_index = i;
-						break;
-					}
-				}
-			}
-			@Override
-			public void mouseReleased(MouseEvent e){
-				if(pressed){
-					pressed = false;
-					repaint();
-				}
-				if(drag_pt){
-					calculate();
-					repaint();
-					drag_pt = false;
-					drag_index = -1;
-				}
-			}	
-		});
-		this.addMouseMotionListener(new MouseMotionAdapter(){
-			@Override
-			public void mouseDragged(MouseEvent e){
-				if(drag_pt && drag_index>=0){
-					double[] pts = mouseToCoordinate(e.getX(),e.getY());
-					
-					if(drag_index>0 && ptx.get(drag_index)<ptx.get(drag_index-1)){
-						ptx.set(drag_index, ptx.get(drag_index-1));
-						pty.set(drag_index, pty.get(drag_index-1));
-						ptx.set(drag_index-1, pts[0]);
-						pty.set(drag_index-1, pts[1]);
-						drag_index--;
-					}else if(drag_index<ptx.size()-1 && ptx.get(drag_index)>ptx.get(drag_index+1)){
-						ptx.set(drag_index, ptx.get(drag_index+1));
-						pty.set(drag_index, pty.get(drag_index+1));
-						ptx.set(drag_index+1, pts[0]);
-						pty.set(drag_index+1, pts[1]);
-						drag_index++;
-					}else{
-						ptx.set(drag_index, pts[0]);
-						pty.set(drag_index, pts[1]);
-					}
-					
-					if(!interpolate)
-						calculate();
-					//repaint();
-				}
-				repaint();
-			}
-			@Override
-			public void mouseMoved(MouseEvent e){
-				double[] pts = mouseToCoordinate(e.getX(),e.getY());
-				for(int i=0; i<ptx.size(); i++){
-					if((Math.abs(pts[0]-ptx.get(i))<=0.2) && (Math.abs(pts[1]-pty.get(i))<=0.2)){
-						if(getCursor().getType()!=hover){
-							setCursor(new Cursor(hover));
-						}
-						break;
-					}else{
-						if(getCursor().getType()!=Cursor.DEFAULT_CURSOR){
-							setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-						}
-					}
-				}
-			}
-		});
+		addMouseFunctions(); // support mouse -> point movement (i.e. mouselistener)
+	}
+	
+	public CartesianGraph(Function f) {
+		super();
+		
+		this.setBackground(Color.WHITE);
+		
+		ptx = new ArrayList<Double>();
+		pty = new ArrayList<Double>();
+		
+		addMouseFunctions();
+		
+		plot(f);
+	}
+	
+	public CartesianGraph(FunctionInterface f) {
+		super();
+		
+		this.setBackground(Color.WHITE);
+		
+		ptx = new ArrayList<Double>();
+		pty = new ArrayList<Double>();
+		
+		addMouseFunctions();
+		
+		plot(new Function(f));
 	}
 	
 	@Override
@@ -290,6 +242,10 @@ public class CartesianGraph extends DataPanel {
 	 */
 	public void plot(Function f){
 		plot(f,5.0);
+	}
+	
+	public void plot(FunctionInterface f){
+		plot(new Function(f), 5.0);
 	}
 	
 	/**
@@ -461,6 +417,85 @@ public class CartesianGraph extends DataPanel {
 			g2d.drawLine((int)(origin_x+(inter_x[i]*ppp)/x_scale), (int)(origin_y-(inter_y[i]*ppp)/y_scale),
 					(int)(origin_x+(inter_x[i+1]*ppp)/x_scale), (int)(origin_y-(inter_y[i+1]*ppp)/y_scale));
 		}
+	}
+	
+	private void addMouseFunctions(){
+		this.addMouseListener(new MouseAdapter(){
+			@Override
+			public void mousePressed(MouseEvent e){
+				double[] pts = mouseToCoordinate(e.getX(),e.getY());
+				if(!pressed){
+					pressed = true;
+					repaint();
+				}
+				for(int i=0; i<ptx.size(); i++){
+					if((Math.abs(pts[0]-ptx.get(i))<=0.2) && (Math.abs(pts[1]-pty.get(i))<=0.2) && canEdit){
+						drag_pt = true;
+						drag_index = i;
+						break;
+					}
+				}
+			}
+			@Override
+			public void mouseReleased(MouseEvent e){
+				if(pressed){
+					pressed = false;
+					repaint();
+				}
+				if(drag_pt){
+					calculate();
+					repaint();
+					drag_pt = false;
+					drag_index = -1;
+				}
+			}	
+		});
+		this.addMouseMotionListener(new MouseMotionAdapter(){
+			@Override
+			public void mouseDragged(MouseEvent e){
+				if(drag_pt && drag_index>=0){
+					double[] pts = mouseToCoordinate(e.getX(),e.getY());
+					
+					if(drag_index>0 && ptx.get(drag_index)<ptx.get(drag_index-1)){
+						ptx.set(drag_index, ptx.get(drag_index-1));
+						pty.set(drag_index, pty.get(drag_index-1));
+						ptx.set(drag_index-1, pts[0]);
+						pty.set(drag_index-1, pts[1]);
+						drag_index--;
+					}else if(drag_index<ptx.size()-1 && ptx.get(drag_index)>ptx.get(drag_index+1)){
+						ptx.set(drag_index, ptx.get(drag_index+1));
+						pty.set(drag_index, pty.get(drag_index+1));
+						ptx.set(drag_index+1, pts[0]);
+						pty.set(drag_index+1, pts[1]);
+						drag_index++;
+					}else{
+						ptx.set(drag_index, pts[0]);
+						pty.set(drag_index, pts[1]);
+					}
+					
+					if(!interpolate)
+						calculate();
+					//repaint();
+				}
+				repaint();
+			}
+			@Override
+			public void mouseMoved(MouseEvent e){
+				double[] pts = mouseToCoordinate(e.getX(),e.getY());
+				for(int i=0; i<ptx.size(); i++){
+					if((Math.abs(pts[0]-ptx.get(i))<=0.2) && (Math.abs(pts[1]-pty.get(i))<=0.2)){
+						if(getCursor().getType()!=hover){
+							setCursor(new Cursor(hover));
+						}
+						break;
+					}else{
+						if(getCursor().getType()!=Cursor.DEFAULT_CURSOR){
+							setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+						}
+					}
+				}
+			}
+		});
 	}
 	
 	/**
