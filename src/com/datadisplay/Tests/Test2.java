@@ -54,7 +54,7 @@ public class Test2 {
 			double val = rand.nextDouble()%0.35;
 			sum += val;
 			if(sum>1) break;
-			pc0.addValue("p"+s++,val);
+			pc0.addValue(val,"p"+s++);
 		}
 		
 		CartesianGraph cg1 = dd.showCartesian();
