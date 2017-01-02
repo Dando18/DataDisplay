@@ -25,7 +25,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import com.datadisplay.BarChart;
-import com.datadisplay.BoxAndWhiskerPlot;
+import com.datadisplay.BoxPlot;
 import com.datadisplay.CartesianGraph;
 import com.datadisplay.DataDisplay;
 import com.datadisplay.ImageView;
@@ -340,7 +340,7 @@ public class Commands {
 							return "sum of list must be > 0.0 and <= 1.0";
 						}
 						for (Double d : l) {
-							pc.addValue(s + "_" + count++, d);
+							pc.addValue(d, s + "_" + count++);
 						}
 					} else if (Pattern.matches("\\[(\\d*(\\.?\\d+)?)(,\\s*\\d*(\\.?\\d+)?)*\\]", s)) {
 						List<Double> l = ConsoleUtilities.inputToList(s);
@@ -370,7 +370,7 @@ public class Commands {
 
 				DataDisplay dd = new DataDisplay();
 				dd.getFrame().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				BoxAndWhiskerPlot bawp = dd.showBoxAndWhiskerPlot();
+				BoxPlot bawp = dd.showBoxPlot();
 
 				for (String s : args) {
 					if (ci.var_lists.containsKey(s)) {

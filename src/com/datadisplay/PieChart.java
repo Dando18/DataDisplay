@@ -66,7 +66,7 @@ public class PieChart extends DataPanel{
 		g2d.drawString(title, cushion/2, cushion/2+fm.getHeight());
 	}
 	
-	public void addValue(String label, double percentage){
+	public void addValue(double percentage, String label){
 		labels.add(label);
 		percentages.add(percentage);
 		if(MathUtilities.sum( percentages ) > 1){
@@ -75,7 +75,7 @@ public class PieChart extends DataPanel{
 	}
 	
 	public void addValue(double percentage){
-		addValue("",percentage);
+		addValue(percentage, "");
 	}
 	
 	public void addValues(List<Double> l){
