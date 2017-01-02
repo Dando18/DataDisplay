@@ -18,8 +18,8 @@ public class BarChart extends DataPanel{
 	
 	private List<Double> bar_values;
 	private List<String> titles;
-	private boolean showBarValues = false;
-	private boolean showBarTitles = false;
+	private boolean showBarValues = true;
+	private boolean showBarTitles = true;
 	private String title = "";
 	
 	private Color[] bar_colors = {Color.RED,Color.BLUE,Color.GREEN,Color.ORANGE,Color.MAGENTA,Color.PINK};
